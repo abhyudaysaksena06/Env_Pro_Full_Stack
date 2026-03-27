@@ -27,10 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Dynamic IP detection for cross-device mobile testing
                 const backendBase = 'https://env-pro-full-stack.onrender.com';
+                const token = localStorage.getItem('token');
+                if(!token) return alert("You must be logged in to sell items.");
 
                 // Push explicitly to local node server REST endpoint 
                 const response = await fetch(`${backendBase}/api/items`, {
                     method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData // Note: Form data automatically sets correct Multpiart boundaries natively!
                 });
 

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GreenScore - Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="orb orb1" style="background: radial-gradient(circle, #ef4444 0%, transparent 70%);"></div>
+  <div class="orb orb2"></div>
+  
+  <div class="nav-container" id="navContainer">
+    <nav>
+      <div class="logo" style="color:#ef4444;">AdminCore</div>
+      <div class="menu">
+        <a href="index.html" class="link home-link"><span class="link-title">Exit Secure Portal</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <section class="profile-dashboard" style="display:flex; justify-content:center; align-items:flex-start; min-height:80vh; padding-top:100px;">
+    <div class="content-area fade-in visible" style="max-width:800px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.3);">
+      <h2 style="color:#ef4444; font-size:32px;">RESTRICTED: Authority Dashboard</h2>
+      <p style="color:var(--muted); margin-bottom:30px;">Manage Hostels, Global Scores, and Marketplace Operations.</p>
+      
+      <div id="adminError" style="color:#ef4444; font-size:16px; margin-bottom:20px; text-align:center;"></div>
+      
+      <!-- Award Points Section -->
+      <h3 style="color:var(--accent); margin-top:20px;">Award GreenScore Points</h3>
+      <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-top:10px;">
+        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Target a specific user by their database ID to manually boost their ecoScore and their Hostel's ranking simultaneously.</p>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <input type="text" id="targetUserId" placeholder="Target User ID" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
+          <input type="number" id="targetPoints" placeholder="Points to Add (e.g. 50)" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
+          <button class="btn" onclick="awardPoints()" style="background:#ef4444; color:white; font-weight:700;">Execute Transaction</button>
+        </div>
+        <div id="awardMsg" style="color:#4ade80; margin-top:10px; font-size:14px; display:none;"></div>
+      </div>
+
+      <!-- Moderation Section -->
+      <h3 style="color:var(--accent); margin-top:40px;">Marketplace Moderation</h3>
+      <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-top:10px;">
+        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Force-delete inappropriate E-Waste listings globally from Atlas.</p>
+        <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
+          <input type="text" id="targetListingId" placeholder="Target Listing Item ID (e.g. 64b8a2...)" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
+          <button class="btn" onclick="deleteListing()" style="background:#ef4444; color:white; font-weight:700;">Purge Listing</button>
+        </div>
+        <div id="deleteMsg" style="color:#4ade80; margin-top:10px; font-size:14px; display:none;"></div>
+      </div>
+      
+    </div>
+  </section>
+
+  <script>
+    const backendBase = 'https://env-pro-full-stack.onrender.com';
+    const token = localStorage.getItem('token');
+    
+    // Auth Check
+    if(!token) window.location.href = "login.html";
+
+    // Verify Admin Role locally first (Server also checks)
+    fetch(`${backendBase}/api/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    }).then(res => res.json()).then(user => {
+        if(user.role !== 'admin') {
+            document.getElementById('adminError').innerHTML = "<b>SECURITY BREACH DETECTED:</b> This incident has been logged. You do not have administrator permissions.";
+            document.querySelector('.content-area').style.border = "2px solid #ef4444";
+            document.querySelectorAll('input, button').forEach(el => el.disabled = true);
+        }
+    }).catch(err => {
+        window.location.href = "login.html";
+    });
+
+    async function awardPoints() {
+        const id = document.getElementById('targetUserId').value;
+        const pts = document.getElementById('targetPoints').value;
+        if(!id || !pts) return alert("Fill out fields");
+        
+        try {
+            const res = await fetch(`${backendBase}/api/admin/score/user`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: id, points: pts })
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || data.message || "Execution Failed");
+            
+            document.getElementById('awardMsg').innerText = data.message;
+            document.getElementById('awardMsg').style.display = "block";
+        } catch(err) {
+            alert(err.message);
+        }
+    }
+
+    async function deleteListing() {
+        const id = document.getElementById('targetListingId').value;
+        if(!id) return alert("Provide a valid listing ID");
+
+        try {
+            const res = await fetch(`${backendBase}/api/admin/items/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || data.message || "Failed");
+            
+            document.getElementById('deleteMsg').innerText = data.message;
+            document.getElementById('deleteMsg').style.display = "block";
+        } catch(err) {
+            alert(err.message);
+        }
+    }
+  </script>
+</body>
+</html>

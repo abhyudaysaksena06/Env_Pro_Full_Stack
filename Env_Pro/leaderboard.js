@@ -1,34 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. DATA MOCKING (14 Hostels) 
-    const TIET_HOSTELS = [
-        "Hostel J", "Hostel H", "Hostel M", "Hostel E", 
-        "Hostel G", "Hostel C", "Hostel A", "Hostel B", 
-        "Hostel D", "Hostel I", "Hostel K", "Hostel L", 
-        "Hostel N", "Hostel O"
-    ];
-
-    // Seed data 
-    // WaterSaved: Higher is better (Liters)
-    // FoodWaste: Lower is better (Kg)
-    // co2: Lower is better (Kg)
-    const hostelData = TIET_HOSTELS.map(name => {
-        let water = Math.floor(Math.random() * 900) + 150;
-        let food = Math.floor(Math.random() * 85) + 5;
-        let carbon = Math.floor(Math.random() * 400) + 40;
-        
-        // Artificial composite score algorithm based on the randomly generated values
-        let score = Math.floor(((water / 1000) * 30) + ((100 - food) * 0.4) + ((500 - carbon) * 0.06));
-        
-        return { name, score, waterSaved: water, foodWaste: food, co2: carbon };
-    });
-
-    // Generate 15 fake individuals 
-    const individualsData = Array.from({length: 15}, (_, i) => ({
-        name: `TIET Student ${i+1}`,
-        hostel: TIET_HOSTELS[Math.floor(Math.random() * TIET_HOSTELS.length)],
-        hostelRating: (Math.random() * 1.5 + 3.5).toFixed(1), // Between 3.5 and 5.0
-        co2: Math.floor(Math.random() * 40) + 8 // Between 8 and 48 kg
-    }));
+const backendBase = 'https://env-pro-full-stack.onrender.com';
 
     // 2. RENDER LOGIC
     function renderCards(data, containerId, sortFn, limit = null, isIndividual = false) {
@@ -103,18 +74,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 3. UI STATE MANAGEMENT
-    // Render all elements automatically; CSS cleanly hides child components past the top 5 to enable hover-expansion!
+    async function loadLeaderboards() {
+        try {
+            const [hostelRes, userRes] = await Promise.all([
+                fetch(`${backendBase}/api/leaderboard/hostel`),
+                fetch(`${backendBase}/api/leaderboard/individual`)
+            ]);
+            let liveHostels = [];
+            let liveUsers = [];
+            if(hostelRes.ok) liveHostels = await hostelRes.json();
+            if(userRes.ok) liveUsers = await userRes.json();
+
+            // If empty, supply a fallback dummy row so UI doesn't crash empty
+            if(liveHostels.length === 0) liveHostels = [{ hostelName: 'Hostel J', totalScore: 100 }];
+            if(liveUsers.length === 0) liveUsers = [{ name: 'Admin', hostelName: 'Hostel J', ecoScore: 100 }];
+
+            const hostelData = liveHostels.map(h => ({
+                name: h.hostelName,
+                score: h.totalScore,
+                waterSaved: Math.floor(h.totalScore * 1.5), 
+                foodWaste: Math.floor(h.totalScore * 0.1),
+                co2: h.totalScore * 3
+            }));
+
+            const individualsData = liveUsers.map(u => ({
+                name: u.name,
+                hostel: u.hostelName || "Day Scholar",
+                hostelRating: "5.0",
+                co2: u.ecoScore * 2,
+                score: u.ecoScore
+            }));
+
+            renderCards(hostelData, 'cumulatedCards', (a, b) => b.score - a.score, hostelData.length);
+            renderCards(hostelData, 'waterCards', (a, b) => b.waterSaved - a.waterSaved, hostelData.length); 
+            renderCards(hostelData, 'foodCards', (a, b) => a.foodWaste - b.foodWaste, hostelData.length);    
+            renderCards(hostelData, 'co2Cards', (a, b) => a.co2 - b.co2, hostelData.length);                
+            
+            renderCards(individualsData, 'individualCards', (a, b) => b.score - a.score, 10, true);
+        } catch(err) {
+            console.error("Failed to load leaderboards:", err);
+        }
+    }
     
-    renderCards(hostelData, 'cumulatedCards', (a, b) => b.score - a.score, TIET_HOSTELS.length);
-    renderCards(hostelData, 'waterCards', (a, b) => b.waterSaved - a.waterSaved, TIET_HOSTELS.length); 
-    renderCards(hostelData, 'foodCards', (a, b) => a.foodWaste - b.foodWaste, TIET_HOSTELS.length);    
-    renderCards(hostelData, 'co2Cards', (a, b) => a.co2 - b.co2, TIET_HOSTELS.length);                
-    
-    renderCards(individualsData, 'individualCards', (a, b) => {
-        let scoreA = parseFloat(a.hostelRating) - (a.co2 / 30);
-        let scoreB = parseFloat(b.hostelRating) - (b.co2 / 30);
-        return scoreB - scoreA;
-    }, 10, true);
+    // Automatically fetch on page load
+    loadLeaderboards();
 
     // 4. ANALYTICS RENDERER
     function renderChart(canvasId, chartData, metricKey, label, color) {

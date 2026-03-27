@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 12px; color: var(--accent); font-weight:600;">• Listed by ${item.listedBy}</p>
                     <div class="market-price">${item.itemPrice}</div>
                 </div>
-                <button class="buy-btn" onclick="alert('Contacting Seller: ${item.listedBy} has been notified of your interest.')">Claim & Contact Seller</button>
+                <button class="buy-btn" onclick="claimItem('${item._id}')">Claim & Contact Seller</button>
             `;
             container.appendChild(card);
         });
@@ -68,8 +68,41 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => {
             console.error('Failed to load marketplace:', err);
             if(statusDiv) {
-                statusDiv.innerHTML = `Backend server unreachable. Make sure you started the local Node.js server (<span style="color:var(--accent);">node server.js</span>).<br><br><b>Falling back to mock UI rendering.</b>`;
+                statusDiv.innerHTML = `Backend server unreachable.<br><br><b>Falling back to mock UI rendering.</b>`;
                 statusDiv.style.color = '#ef4444';
             }
         });
+
+    // Global Claim Function
+    window.claimItem = async (itemId) => {
+        const token = localStorage.getItem('token');
+        if(!token) {
+            alert("You must log in to claim items.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${backendBase}/api/items/claim/${itemId}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || "Claim failed");
+            
+            alert(data.message);
+            btn.innerText = "Claimed ✓";
+            btn.style.background = "#4ade80";
+            btn.style.color = "#000";
+        } catch(err) {
+            alert(err.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    };
 });

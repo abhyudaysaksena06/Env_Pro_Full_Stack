@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GreenScore - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="cursor-glow"></div>
+
+  <div class="nav-container" id="navContainer">
+    <nav>
+      <div class="logo">GreenScore</div>
+      <div class="menu">
+        <a href="index.html" class="link home-link">
+          <span class="link-title">Home</span>
+        </a>
+        <a href="Leaderboard.html" class="link leader-link">
+          <span class="link-title">Leaderboard</span>
+        </a>
+        <a href="E_Waste.html" class="link ewaste-link">
+          <span class="link-title">E-Waste</span>
+        </a>
+        <a href="User_Profile.html" class="link active profile-link">
+          <span class="link-title">Profile</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <section class="profile-dashboard" style="display:flex; justify-content:center; align-items:center; min-height:80vh; padding-top:80px;">
+    <div class="content-area fade-in visible" style="max-width:400px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <h2 style="color:var(--accent); text-align:center;">Welcome Back</h2>
+      <p style="text-align:center; color:var(--muted); margin-bottom:20px;">Log in to access your dashboard</p>
+      
+      <form id="loginForm" class="form-grid" style="grid-template-columns:1fr;">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="email" required placeholder="you@thapar.edu">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <div id="loginError" style="color:#ef4444; font-size:13px; text-align:center; min-height:15px;"></div>
+        <button type="submit" class="btn active" style="margin-top:10px;">Secure Login</button>
+      </form>
+      
+      <p style="text-align:center; margin-top:15px; font-size:14px; color:var(--muted);">
+        Don't have an account? <a href="register.html" style="color:var(--accent); text-decoration:none;">Create one here</a>
+      </p>
+    </div>
+  </section>
+
+  <script src="auth.js"></script>
+</body>
+</html>

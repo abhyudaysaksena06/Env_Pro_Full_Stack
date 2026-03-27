@@ -1,4 +1,92 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // 0. AUTHENTICATION LOGIC
+    const backendBase = 'https://env-pro-full-stack.onrender.com';
+    const token = localStorage.getItem('token');
+    
+    if(!token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    fetch(`${backendBase}/api/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(res => {
+        if(!res.ok) throw new Error("Session expired - please login again");
+        return res.json();
+    })
+    .then(user => {
+        document.querySelector('.avatar-circle').innerText = user.name.substring(0,2).toUpperCase();
+        document.querySelector('.user-avatar h3').innerText = user.name;
+        document.querySelector('.badge').innerText = `GreenScore - ${user.ecoScore} Points 🌿`;
+
+        const inputs = document.querySelectorAll('.input-group input');
+        if(inputs.length >= 5) {
+            inputs[0].value = user.name;      // Full Name
+            inputs[1].value = "N/A";          // Roll No (Hidden/Placeholder)
+            inputs[2].value = user.email;     // Email
+            inputs[3].value = user.hostelName || "Day Scholar"; // Hostel
+            inputs[4].value = user.phone || "Not Provided"; // Phone
+        }
+
+        if(user.role === 'admin') {
+            const navMenu = document.querySelector('.menu');
+            if(navMenu) {
+                const adminLink = document.createElement('a');
+                adminLink.href = "admin_dashboard.html";
+                adminLink.className = "link admin-link";
+                adminLink.style.color = "#ef4444";
+                adminLink.innerHTML = `<span class="link-title">Admin Dash</span>`;
+                navMenu.appendChild(adminLink);
+            }
+        }
+
+        // Fetch User's Active Listings 
+        fetch(`${backendBase}/api/items`)
+            .then(r => r.json())
+            .then(items => {
+                const myListings = items.filter(i => i.listedBy === user.name);
+                const container = document.getElementById('myListingsContainer');
+                container.innerHTML = "";
+                
+                if(myListings.length === 0) {
+                    container.innerHTML = `<p style="color:var(--muted); width:100%; grid-column:1/-1;">You have no active items on the GreenScore marketplace.</p>`;
+                } else {
+                    myListings.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.style = "background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:16px;";
+                        card.innerHTML = `
+                            <div style="width:100%; height:120px; background-image:url('${item.photoUrl || ''}'); background-size:cover; background-position:center; border-radius:12px; margin-bottom:10px; background-color:rgba(255,255,255,0.05);"></div>
+                            <h3 style="font-size:18px;">${item.itemName}</h3>
+                            <p style="color:var(--accent); font-weight:700; margin-bottom:15px;">${item.itemPrice}</p>
+                            <button onclick="deleteListing('${item._id}')" style="width:100%; padding:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; border-radius:8px; cursor:pointer;" onmouseover="this.style.background='#ef4444'; this.style.color='#fff';" onmouseout="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#ef4444';">Mark Sold / Remove</button>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            });
+
+        // Expose global deletion function for the buttons
+        window.deleteListing = async (itemId) => {
+            if(!confirm("Are you sure you want to remove this item permanently from the marketplace?")) return;
+            try {
+                const dr = await fetch(`${backendBase}/api/items/${itemId}`, { 
+                    method: 'DELETE', 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                });
+                if(dr.ok) { window.location.reload(); } else { alert("Failed to delete."); }
+            } catch(e) { alert(e.message); }
+        };
+
+    })
+    .catch(err => {
+        console.error(err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = "login.html";
+    });
+
     // 1. TABS LOGIC
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
