@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Dynamic IP detection for cross-device mobile testing
-                const backendBase = 'https://env-pro-full-stack.onrender.com';
+                const backendBase = window.backendBase;
                 const token = localStorage.getItem('token');
                 if(!token) return alert("You must be logged in to sell items.");
 

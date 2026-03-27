@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p style="font-size: 12px; color: var(--accent); font-weight:600;">• Listed by ${item.listedBy}</p>
                     <div class="market-price">${item.itemPrice}</div>
                 </div>
-                <button class="buy-btn" onclick="claimItem('${item._id}')">Claim & Contact Seller</button>
+                <button class="buy-btn" onclick="claimItem(event, '${item._id}')">Claim & Contact Seller</button>
             `;
             container.appendChild(card);
         });
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Dynamic IP mapping for mobile cross-device tracking
-    const backendBase = 'https://env-pro-full-stack.onrender.com';
+    const backendBase = window.backendBase;
 
     // Fetch live inventory from local Node.js backend
     fetch(`${backendBase}/api/items`)
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     // Global Claim Function
-    window.claimItem = async (itemId) => {
+    window.claimItem = async (event, itemId) => {
         const token = localStorage.getItem('token');
         if(!token) {
             alert("You must log in to claim items.");

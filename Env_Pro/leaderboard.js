@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-const backendBase = 'https://env-pro-full-stack.onrender.com';
+    const backendBase = window.backendBase;
 
     // 2. RENDER LOGIC
     function renderCards(data, containerId, sortFn, limit = null, isIndividual = false) {

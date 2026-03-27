@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- 1. AUTHENTICATION LOGIC ---
-    const backendBase = 'https://env-pro-full-stack.onrender.com';
+    const backendBase = window.backendBase;
     const token = localStorage.getItem('token');
     
     if(token) {
@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('detailsGuest').style.display = 'none';
         document.getElementById('detailsAuth').style.display = 'grid';
         document.getElementById('editProfileBtn').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'block';
         
         document.getElementById('listingsGuest').style.display = 'none';
         document.getElementById('listingsAuth').style.display = 'block';
@@ -89,6 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 if(dr.ok) { window.location.reload(); } else { alert("Failed to delete."); }
             } catch(e) { alert(e.message); }
+        };
+
+        // Expose global logout function
+        window.logoutUser = () => {
+            if(confirm("Are you sure you want to log out of GreenScore?")) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = "login.html";
+            }
         };
 
     })

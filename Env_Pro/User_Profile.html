@@ -137,7 +137,10 @@
               <input type="text" value="+91 9876543210" readonly>
             </div>
           </div>
-          <button id="editProfileBtn" class="btn btn-secondary" style="margin-top: 20px; display:none;">Edit Profile (Coming Soon)</button>
+          <div style="display:flex; justify-content:flex-start; gap:15px; margin-top:20px;">
+            <button id="editProfileBtn" class="btn btn-secondary" style="display:none;">Edit Profile (Coming Soon)</button>
+            <button id="logoutBtn" class="btn" onclick="logoutUser()" style="display:none; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444;">Log Out</button>
+          </div>
         </div>
 
         <!-- TAB 1.5: MY LISTINGS -->
