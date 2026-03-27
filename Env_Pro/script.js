@@ -1,20 +1,9 @@
-const hostels = [
-  { name: "HOSTEL H", score: 82 },
-  { name: "HOSTEL M", score: 75 },
-  { name: "HOSTEL E", score: 68 },
-];
+const backendBase = 'https://env-pro-full-stack.onrender.com';
 
-const individuals = [
-  { name: "REDDIT USER", score: 85 },
-  { name: "SAAAAAAANVI", score: 78 },
-  { name: "INSTA USER", score: 74 },
-];
-
-function render(data, id) {
+function renderCards(data, id) {
   const container = document.getElementById(id);
-  if (!container) return; // Safety check in case elements do not exist on the current page
-
-  data.sort((a, b) => b.score - a.score);
+  if (!container) return; 
+  container.innerHTML = ""; // Clear existing before rendering
 
   data.forEach((item, i) => {
     const div = document.createElement("div");
@@ -23,7 +12,7 @@ function render(data, id) {
 
     div.innerHTML = `
     <div>#${i + 1}</div>
-    <h3>${item.name}</h3>
+    <h3 style="font-size:16px;">${item.name}</h3>
     <p>${item.score}</p>
   `;
 
@@ -31,8 +20,43 @@ function render(data, id) {
   });
 }
 
-render(hostels, "hostelCards");
-render(individuals, "individualCards");
+async function loadHomeLeaderboards() {
+  const hostelContainer = document.getElementById("hostelCards");
+  const individualContainer = document.getElementById("individualCards");
+  
+  if(!hostelContainer || !individualContainer) return; // Only process on homepage!
+
+  try {
+    const [hRes, iRes] = await Promise.all([
+        fetch(`${backendBase}/api/leaderboard/hostel`),
+        fetch(`${backendBase}/api/leaderboard/individual`)
+    ]);
+    
+    if(hRes.ok && iRes.ok) {
+        const liveHostels = await hRes.json();
+        const liveUsers = await iRes.json();
+        
+        let topHostels = liveHostels.map(h => ({ name: h.hostelName, score: h.totalScore })).sort((a,b) => b.score - a.score).slice(0, 3);
+        let topUsers = liveUsers.map(u => ({ name: u.name, score: u.ecoScore })).sort((a,b) => b.score - a.score).slice(0, 3);
+        
+        // Failsafe rendering if DB is completely empty early on
+        if(topHostels.length === 0) topHostels = [{name: 'Hostel J', score: 100}, {name: 'Hostel M', score: 80}, {name: 'Hostel E', score: 60}];
+        if(topUsers.length === 0) topUsers = [{name: 'Admin', score: 100}, {name: 'Eco Warrior', score: 90}, {name: 'Student', score: 80}];
+        
+        renderCards(topHostels, "hostelCards");
+        renderCards(topUsers, "individualCards");
+    }
+  } catch(err) {
+    console.error("Home Leaderboard fetch failed, running mock fallbacks.", err);
+    
+    // Fallback to static lists
+    const hostels = [ { name: "HOSTEL H", score: 82 }, { name: "HOSTEL M", score: 75 }, { name: "HOSTEL E", score: 68 } ];
+    const individuals = [ { name: "REDDIT USER", score: 85 }, { name: "SAAAAAAANVI", score: 78 }, { name: "INSTA USER", score: 74 } ];
+    renderCards(hostels, "hostelCards");
+    renderCards(individuals, "individualCards");
+  }
+}
+loadHomeLeaderboards();
 
 /* DYNAMIC SCROLL COUNTERS */
 const statsSection = document.getElementById('stats-section');
