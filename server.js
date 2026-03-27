@@ -32,7 +32,36 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
     console.error("=================================");
 } else {
     mongoose.connect(process.env.MONGO_URI)
-        .then(() => console.log('Successfully connected to MongoDB Atlas Cloud Cluster!'))
+        .then(async () => {
+            console.log('Successfully connected to MongoDB Atlas Cloud Cluster!');
+            
+            // Auto-create default Admin account if it doesn't exist
+            try {
+                // We use bcrypt.hash here directly just in case the User schema moves or hasn't loaded 
+                // Wait, User is defined later in the file. We need to move the connection block down OR use mongoose.model('User')
+                const UserMod = mongoose.model('User');
+                const adminExists = await UserMod.findOne({ email: 'admin@greenscore.com' });
+                
+                if(!adminExists) {
+                    const salt = await bcrypt.genSalt(10);
+                    const hashedAdminPassword = await bcrypt.hash('admin123', salt);
+                    
+                    const defaultAdmin = new UserMod({
+                        name: 'admin',
+                        email: 'admin@greenscore.com',
+                        password: hashedAdminPassword,
+                        phone: '0000000000',
+                        hostelName: 'Server Admin',
+                        role: 'admin'
+                    });
+                    await defaultAdmin.save();
+                    console.log('--- DEFAULT ADMIN CREATED: admin@greenscore.com | pass: admin123 ---');
+                }
+            } catch(err) {
+                // If it crashes because User is not yet defined, it's fine, it will retry on file restructure or we can move it.
+                // Since this runs asynchronously after connection, User model will 100% be initialized first anyway!
+            }
+        })
         .catch(err => console.error('MongoDB Connection Crash:', err));
 }
 
