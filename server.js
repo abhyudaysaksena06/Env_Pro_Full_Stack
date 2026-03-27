@@ -46,7 +46,7 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
                 
                 if(!adminExists) {
                     const salt = await bcrypt.genSalt(10);
-                    const hashedAdminPassword = await bcrypt.hash('admin123', salt);
+                    const hashedAdminPassword = await bcrypt.hash('Admin_923', salt);
                     
                     const defaultAdmin = new UserMod({
                         name: 'admin',
@@ -58,7 +58,7 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
                         role: 'admin'
                     });
                     await defaultAdmin.save();
-                    console.log('--- DEFAULT ADMIN CREATED: admin@greenscore.com | pass: admin123 ---');
+                    console.log('--- DEFAULT ADMIN CREATED: admin@greenscore.com | pass: Admin_923 ---');
                 }
             } catch(err) {
                 console.error("Failed to seed admin:", err.message);
