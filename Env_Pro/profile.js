@@ -3,23 +3,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const backendBase = 'https://env-pro-full-stack.onrender.com';
     const token = localStorage.getItem('token');
     
-    if(!token) {
-        // Just return to let the hardcoded Guest Mode HTML render natively
-        return;
-    }
+    if(token) {
+        // Valid token found: Hide Guest Blocks, Show Authorized Sub-Panels
+        document.getElementById('detailsGuest').style.display = 'none';
+        document.getElementById('detailsAuth').style.display = 'grid';
+        document.getElementById('editProfileBtn').style.display = 'block';
+        
+        document.getElementById('listingsGuest').style.display = 'none';
+        document.getElementById('listingsAuth').style.display = 'block';
+        
+        document.getElementById('performanceGuest').style.display = 'none';
+        document.getElementById('performanceAuth').style.display = 'block';
 
-    // Valid token found: Hide Guest Blocks, Show Authorized Sub-Panels
-    document.getElementById('detailsGuest').style.display = 'none';
-    document.getElementById('detailsAuth').style.display = 'grid';
-    document.getElementById('editProfileBtn').style.display = 'block';
-    
-    document.getElementById('listingsGuest').style.display = 'none';
-    document.getElementById('listingsAuth').style.display = 'block';
-    
-    document.getElementById('performanceGuest').style.display = 'none';
-    document.getElementById('performanceAuth').style.display = 'block';
-
-    fetch(`${backendBase}/api/users/me`, {
+        fetch(`${backendBase}/api/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => {
@@ -100,8 +96,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(err);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = "login.html";
+        console.log("Session mapping restored to local guest UI.");
     });
+    } // Closes Token Loop
 
     // 1. TABS LOGIC
     const tabBtns = document.querySelectorAll('.tab-btn');
