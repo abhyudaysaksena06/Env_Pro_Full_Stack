@@ -131,7 +131,7 @@ function initPreloader() {
 
 window.addEventListener("load", initPreloader);
 
-/* MOBILE MENU TOGGLE */
+/* MOBILE MENU TOGGLE AND AUTH POPUP */
 document.addEventListener("DOMContentLoaded", () => {
     const hamburger = document.querySelector(".hamburger");
     const menu = document.querySelector(".menu");
@@ -140,6 +140,34 @@ document.addEventListener("DOMContentLoaded", () => {
             hamburger.classList.toggle("active");
             menu.classList.toggle("active");
         });
+    }
+
+    // Global Login Prompt 
+    const token = localStorage.getItem('token');
+    const path = window.location.pathname;
+    const isAuthPage = path.includes('login.html') || path.includes('register.html');
+    
+    if(!token && !isAuthPage && !sessionStorage.getItem('popupDismissed')) {
+        const popup = document.createElement('div');
+        popup.id = 'authPopup';
+        popup.style = "position:fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+        popup.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <h3 style="color:white; font-size:18px;">Join GreenScore 🌱</h3>
+                <button onclick="sessionStorage.setItem('popupDismissed', 'true'); document.getElementById('authPopup').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer;" aria-label="Close">&times;</button>
+            </div>
+            <p style="color:var(--muted); font-size:14px; margin-bottom:15px; max-width:260px; line-height:1.4;">Log in to buy or sell E-Waste items, track your CO2 footprint, and climb the leaderboard!</p>
+            <div style="display:flex; gap:10px;">
+                <button onclick="window.location.href='login.html'" class="btn" style="padding:10px 20px; font-size:14px; width:100%; background:#4ade80; color:black; font-weight:600; text-align:center;">Secure Portal Login</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+        
+        // Wait for preloader to finish, then slide in
+        setTimeout(() => {
+            popup.style.transform = "translateY(0)";
+            popup.style.opacity = "1";
+        }, 2500);
     }
 });
 

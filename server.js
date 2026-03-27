@@ -99,6 +99,7 @@ const EwasteItem = mongoose.model('EwasteItem', ItemSchema);
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    rollNumber: { type: String, required: true },
     password: { type: String, required: true },
     phone: String,
     hostelName: String,
@@ -143,14 +144,14 @@ const isAdmin = (req, res, next) => {
 // --- AUTHENTICATION ROUTES ---
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { name, email, password, phone, hostelName } = req.body;
+        const { name, email, rollNumber, password, phone, hostelName } = req.body;
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: 'User already exists' });
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        user = new User({ name, email, password: hashedPassword, phone, hostelName });
+        user = new User({ name, email, rollNumber, password: hashedPassword, phone, hostelName });
         await user.save();
 
         const token = jwt.sign({ id: user.id, role: user.role, name: user.name, email: user.email }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '7d' });

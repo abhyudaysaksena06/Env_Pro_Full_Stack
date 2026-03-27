@@ -2,6 +2,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const sellForm = document.getElementById("sellForm");
     const statusDiv = document.getElementById("submitStatus");
 
+    // Strict Seller Authorization Guard
+    const token = localStorage.getItem('token');
+    if(sellForm && !token) {
+        alert("Authentication Required: You must be securely logged in to list marketplace items.");
+        window.location.href = "login.html";
+        return;
+    }
+
     if (sellForm) {
         sellForm.addEventListener("submit", async (e) => {
             e.preventDefault();

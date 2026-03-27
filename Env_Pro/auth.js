@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify({
                         name: document.getElementById('name').value,
                         email: document.getElementById('email').value,
+                        rollNumber: document.getElementById('rollNumber').value,
                         phone: document.getElementById('phone').value,
                         hostelName: document.getElementById('hostelName').value,
                         password: document.getElementById('password').value
