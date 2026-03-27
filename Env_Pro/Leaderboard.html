@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenScore - Rankings</title>
+  
+  <script>
+    if(localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    if(localStorage.getItem('text-size') === 'large') document.documentElement.setAttribute('data-text', 'large');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style2.css" />
+  <link rel="stylesheet" href="leaderboard.css" />
+</head>
+<body>
+  <!-- PRELOADER -->
+  <div id="loader">
+    <div class="text-container">
+      <h1 class="loader-text">REDUCE</h1>
+      <h1 class="loader-text">REUSE</h1>
+      <h1 class="loader-text">RECYCLE</h1>
+    </div>
+  </div>
+
+  <!-- BG ELEMENTS -->
+  <div class="bg"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="cursor-glow"></div>
+
+  <!-- NAV -->
+  <div class="nav-container" id="navContainer">
+    <nav>
+      <div class="logo">GreenScore</div>
+      
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="menu">
+        <a href="index.html" class="link home-link">
+          <span class="link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </span>
+          <span class="link-title">Home</span>
+        </a>
+        <a href="Leaderboard.html" class="link active leader-link">
+          <span class="link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </span>
+          <span class="link-title">Leaderboard</span>
+        </a>
+        <a href="E_Waste.html" class="link ewaste-link">
+          <span class="link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </span>
+          <span class="link-title">E-Waste</span>
+        </a>
+        <a href="Team.html" class="link team-link">
+          <span class="link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+            </svg>
+          </span>
+          <span class="link-title">Team</span>
+        </a>
+        <a href="User_Profile.html" class="link profile-link">
+          <span class="link-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </span>
+          <span class="link-title">User Profile</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <section class="profile-dashboard leaderboard-dashboard">
+    <div class="container dashboard-inner" style="display: block;">
+      
+      <!-- HEADER -->
+      <h1 class="page-header" style="text-align:center; font-size:48px; margin-bottom:10px; font-weight:800; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Campus Rankings</h1>
+      <p style="text-align:center; color:var(--muted); margin-bottom: 40px; font-size: 16px;">Explore TIET's multi-layered environmental scoreboards. Hover over any hostel to peek at granular analytics.</p>
+
+      <!-- CONTENT ROUTES -->
+      
+      <!-- CUMULATED -->
+      <div class="leaderboard-section fade-in" id="cumulated">
+          <h2 style="color:var(--accent); margin-bottom:15px; font-size:32px;">Cumulative Ranking</h2>
+          <div class="split-layout">
+              <div class="analytics-side">
+                  <div class="chart-wrapper"><canvas id="chartCumulated"></canvas></div>
+              </div>
+              <div class="leaderboard-side">
+                  <div class="cards" id="cumulatedCards"></div>
+                  <div class="expand-toggle">Click to see all rankings ▼</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- WATER -->
+      <div class="leaderboard-section fade-in delay-1" id="water">
+          <h2 style="color:var(--accent); margin-bottom:5px; font-size:32px;">Water Savings</h2>
+          <p style="color:var(--muted); margin-bottom:20px;">Ranked highest to lowest by total liters of water preserved actively tracking daily limits.</p>
+          <div class="split-layout">
+              <div class="analytics-side">
+                  <div class="chart-wrapper"><canvas id="chartWater"></canvas></div>
+              </div>
+              <div class="leaderboard-side">
+                  <div class="cards" id="waterCards"></div>
+                  <div class="expand-toggle">Click to see all rankings ▼</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- FOOD -->
+      <div class="leaderboard-section fade-in delay-2" id="food">
+          <h2 style="color:var(--accent); margin-bottom:5px; font-size:32px;">Food Waste</h2>
+          <p style="color:var(--muted); margin-bottom:20px;">Ranked lowest to highest by total kg of food unnecessarily discarded via mess metrics.</p>
+          <div class="split-layout">
+              <div class="analytics-side">
+                  <div class="chart-wrapper"><canvas id="chartFood"></canvas></div>
+              </div>
+              <div class="leaderboard-side">
+                  <div class="cards" id="foodCards"></div>
+                  <div class="expand-toggle">Click to see all rankings ▼</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- CO2 -->
+      <div class="leaderboard-section fade-in delay-3" id="co2">
+          <h2 style="color:var(--accent); margin-bottom:5px; font-size:32px;">CO2 Control</h2>
+          <p style="color:var(--muted); margin-bottom:20px;">Ranked lowest to highest by net kg of CO2 equivalent emissions tracked per capita.</p>
+          <div class="split-layout">
+              <div class="analytics-side">
+                  <div class="chart-wrapper"><canvas id="chartCo2"></canvas></div>
+              </div>
+              <div class="leaderboard-side">
+                  <div class="cards" id="co2Cards"></div>
+                  <div class="expand-toggle">Click to see all rankings ▼</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- INDIVIDUALS -->
+      <div class="leaderboard-section fade-in" id="individuals">
+          <h2 style="color:var(--accent); margin-bottom:5px; font-size:32px;">Top Individuals</h2>
+          <p style="color:var(--muted); margin-bottom:20px;">Top 10 most eco-conscious students algorithmically sorted against strict pure CO2 footprint thresholds.</p>
+          <div class="split-layout">
+              <div class="analytics-side">
+                  <div class="chart-wrapper"><canvas id="chartIndividual"></canvas></div>
+              </div>
+              <div class="leaderboard-side">
+                  <div class="cards" id="individualCards"></div>
+                  <div class="expand-toggle">Click to see all rankings ▼</div>
+              </div>
+          </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="script.js"></script>
+  <script src="leaderboard.js"></script>
+</body>
+</html>

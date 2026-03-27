@@ -1,0 +1,272 @@
+/* ewaste.css - Component Styling for E-Waste Dashboard */
+
+.ewaste-locator {
+    padding-top: 120px;
+    padding-bottom: 40px;
+    position: relative;
+    z-index: 10;
+}
+
+.map-wrapper {
+    width: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transition: 0.5s ease;
+}
+
+.map-wrapper iframe {
+    display: block;
+    width: 100%;
+    height: 500px;
+}
+
+/* Light Theme overrides for the Map Box */
+[data-theme='light'] .map-wrapper {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Marketplace Header */
+.market-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 10px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sell-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--accent) !important;
+    box-shadow: 0 10px 20px rgba(74, 222, 128, 0.15);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.sell-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(74, 222, 128, 0.25);
+}
+
+/* Interactive Marketplace Card Tweaks */
+.marketplace .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    text-align: left;
+}
+
+.market-img {
+    width: 100%;
+    height: 180px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    overflow: hidden;
+}
+
+[data-theme='light'] .market-img {
+    background: rgba(0,0,0,0.04);
+}
+
+.market-badge {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.marketplace .card h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.market-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+[data-theme='light'] .market-price {
+    color: #0f172a;
+}
+
+.buy-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+[data-theme='light'] .buy-btn {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.1);
+    color: #0f172a;
+}
+
+.buy-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+[data-theme='light'] .buy-btn:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* Dynamic Search Input */
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+}
+
+[data-theme='light'] .search-input {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.15);
+    color: #0f172a;
+}
+
+/* Marketplace Portals */
+.portal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.portal-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 50px 30px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.5s ease, border-color 0.5s ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.portal-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.05);
+}
+
+.portal-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    transition: transform 0.3s;
+}
+
+.portal-card:hover .portal-icon {
+    transform: scale(1.1);
+}
+
+.portal-card h3 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+.portal-card p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+[data-theme='light'] .portal-card {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .portal-grid { grid-template-columns: 1fr; }
+    
+    .page-header {
+        font-size: 32px !important;
+    }
+    
+    .ewaste-locator p, .marketplace p, .marketplace-portals p {
+        font-size: 14px !important;
+    }
+    
+    .market-header h2, .marketplace h2, .marketplace-portals h2 {
+        font-size: 28px !important;
+    }
+
+    .form-card {
+        padding: 25px 20px !important;
+    }
+
+    .form-split-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0px !important;
+    }
+
+    .form-split-grid .form-group {
+        margin-bottom: 20px;
+    }
+
+    #successText {
+        font-size: 32px !important;
+    }
+    
+    #successSub {
+        font-size: 15px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .map-wrapper iframe {
+        height: 350px;
+    }
+    .market-header {
+        justify-content: center;
+        text-align: center;
+    }
+}
