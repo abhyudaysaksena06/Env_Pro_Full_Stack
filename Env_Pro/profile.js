@@ -1,5 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 0. AUTHENTICATION LOGIC
+    // --- 0. TAB EVENT LISTENERS ---
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-tab');
+            const targetContent = document.getElementById(targetId);
+            if(targetContent) targetContent.classList.add('active');
+        });
+    });
+
+    // --- 1. AUTHENTICATION LOGIC ---
     const backendBase = 'https://env-pro-full-stack.onrender.com';
     const token = localStorage.getItem('token');
     
