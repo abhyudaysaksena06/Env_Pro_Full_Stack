@@ -49,6 +49,7 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
                     const defaultAdmin = new UserMod({
                         name: 'admin',
                         email: 'admin@greenscore.com',
+                        rollNumber: 'ADMIN999',
                         password: hashedAdminPassword,
                         phone: '0000000000',
                         hostelName: 'Server Admin',
@@ -58,8 +59,7 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
                     console.log('--- DEFAULT ADMIN CREATED: admin@greenscore.com | pass: admin123 ---');
                 }
             } catch(err) {
-                // If it crashes because User is not yet defined, it's fine, it will retry on file restructure or we can move it.
-                // Since this runs asynchronously after connection, User model will 100% be initialized first anyway!
+                console.error("Failed to seed admin:", err.message);
             }
         })
         .catch(err => console.error('MongoDB Connection Crash:', err));
