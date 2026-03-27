@@ -1,4 +1,4 @@
-const backendBase = 'https://env-pro-full-stack.onrender.com';
+window.backendBase = 'https://env-pro-full-stack.onrender.com';
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");

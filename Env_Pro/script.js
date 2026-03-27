@@ -1,4 +1,4 @@
-const backendBase = 'https://env-pro-full-stack.onrender.com';
+window.backendBase = 'https://env-pro-full-stack.onrender.com';
 
 function renderCards(data, id) {
   const container = document.getElementById(id);
