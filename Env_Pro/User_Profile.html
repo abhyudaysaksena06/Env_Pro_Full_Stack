@@ -93,9 +93,9 @@
     <div class="container dashboard-inner">
       <div class="sidebar fade-in delay-1">
         <div class="user-avatar">
-          <div class="avatar-circle">JD</div>
-          <h3>John Doe</h3>
-          <p class="badge">Eco Warrior - Level 4 🌿</p>
+          <div class="avatar-circle" id="profileInitials">UA</div>
+          <h3 id="profileName">unauth_user</h3>
+          <p class="badge" id="profileBadge" style="display:none;">Guest Member 👤</p>
         </div>
         <ul class="tab-list">
           <li class="tab-btn active" data-tab="details">My Details</li>
@@ -109,7 +109,13 @@
         <!-- TAB 1: DETAILS -->
         <div class="tab-content active" id="details">
           <h2 style="color:var(--accent);">Personal Details</h2>
-          <div class="form-grid">
+          
+          <div id="detailsGuest" style="display:block; text-align:center; padding:40px;">
+             <p style="color:var(--muted); margin-bottom:20px;">You are currently browsing as a guest.</p>
+             <button onclick="window.location.href='login.html'" class="btn" style="background:#4ade80; color:black; font-weight:bold; margin:0 auto; display:inline-block; width:auto; padding:10px 20px;">Click here to Log In</button>
+          </div>
+
+          <div id="detailsAuth" style="display:none;" class="form-grid">
             <div class="input-group">
               <label>Full Name</label>
               <input type="text" value="John Doe" readonly>
@@ -131,15 +137,23 @@
               <input type="text" value="+91 9876543210" readonly>
             </div>
           </div>
-          <button class="btn btn-secondary" style="margin-top: 20px;">Edit Profile (Coming Soon)</button>
+          <button id="editProfileBtn" class="btn btn-secondary" style="margin-top: 20px; display:none;">Edit Profile (Coming Soon)</button>
         </div>
 
         <!-- TAB 1.5: MY LISTINGS -->
         <div class="tab-content" id="listings">
           <h2 style="color:var(--accent);">My Active Marketplace Inventory</h2>
-          <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Manage the E-Waste items you currently have listed for circulation on the network.</p>
-          <div id="myListingsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-              <!-- Javascript will populate listings dynamically here -->
+          
+          <div id="listingsGuest" style="display:block; text-align:center; padding:40px;">
+             <p style="color:var(--muted); margin-bottom:20px;">Log in to manage and post your E-Waste items securely.</p>
+             <button onclick="window.location.href='login.html'" class="btn" style="border:1px solid #4ade80; background:transparent; color:#4ade80; font-weight:bold; margin:0 auto; display:inline-block; width:auto; padding:10px 20px;">Log In Now</button>
+          </div>
+
+          <div id="listingsAuth" style="display:none;">
+            <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Manage the E-Waste items you currently have listed for circulation on the network.</p>
+            <div id="myListingsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Javascript will populate listings dynamically here -->
+            </div>
           </div>
         </div>
 
@@ -147,24 +161,31 @@
         <div class="tab-content" id="performance">
           <h2 style="color:var(--accent);">Performance Insights</h2>
           
-          <div class="ai-insight-box">
-            <div class="ai-icon">🤖</div>
-            <div class="ai-text">
-              <h3>AI Personalized Suggestion</h3>
-              <p>Your AC usage was <strong>20% higher</strong> than standard this week. By turning off the AC 1 hour earlier daily, you could potentially reduce your carbon footprint by <strong>5.1 kg CO2</strong> per week and boost your GreenScore back into the top 10% in Hostel J!</p>
-            </div>
-          </div>
-
-          <div class="chart-container">
-             <h3>GreenScore Trend (Monthly & Weekly)</h3>
-             <div style="height: 300px; position:relative;">
-               <canvas id="performanceChart"></canvas>
-             </div>
+          <div id="performanceGuest" style="display:block; text-align:center; padding:40px;">
+             <p style="color:var(--muted); margin-bottom:20px;">Log in to view your environment performance, AI insights, and GreenScore impact stats.</p>
+             <button onclick="window.location.href='login.html'" class="btn" style="border:1px solid #4ade80; background:transparent; color:#4ade80; font-weight:bold; margin:0 auto; display:inline-block; width:auto; padding:10px 20px;">Access Secure Portal</button>
           </div>
           
-          <div class="analogies">
-            <h3 style="margin-bottom:10px;">Quick Progress Stats</h3>
-            <div class="analogy-card">💧 <strong>Water Pattern:</strong> You saved 40L of water compared to the hostel average. Keep your showers under 10 minutes to maintain this!</div>
+          <div id="performanceAuth" style="display:none;">
+            <div class="ai-insight-box">
+              <div class="ai-icon">🤖</div>
+              <div class="ai-text">
+                <h3>AI Personalized Suggestion</h3>
+                <p>Your AC usage was <strong>20% higher</strong> than standard this week. By turning off the AC 1 hour earlier daily, you could potentially reduce your carbon footprint by <strong>5.1 kg CO2</strong> per week and boost your GreenScore back into the top 10% in Hostel J!</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+               <h3>GreenScore Trend (Monthly & Weekly)</h3>
+               <div style="height: 300px; position:relative;">
+                 <canvas id="performanceChart"></canvas>
+               </div>
+            </div>
+            
+            <div class="analogies">
+              <h3 style="margin-bottom:10px;">Quick Progress Stats</h3>
+              <div class="analogy-card">💧 <strong>Water Pattern:</strong> You saved 40L of water compared to the hostel average. Keep your showers under 10 minutes to maintain this!</div>
+            </div>
           </div>
         </div>
 

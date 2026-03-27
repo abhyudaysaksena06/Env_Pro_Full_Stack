@@ -4,21 +4,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
     
     if(!token) {
-        window.location.href = "login.html";
+        // Just return to let the hardcoded Guest Mode HTML render natively
         return;
     }
+
+    // Valid token found: Hide Guest Blocks, Show Authorized Sub-Panels
+    document.getElementById('detailsGuest').style.display = 'none';
+    document.getElementById('detailsAuth').style.display = 'grid';
+    document.getElementById('editProfileBtn').style.display = 'block';
+    
+    document.getElementById('listingsGuest').style.display = 'none';
+    document.getElementById('listingsAuth').style.display = 'block';
+    
+    document.getElementById('performanceGuest').style.display = 'none';
+    document.getElementById('performanceAuth').style.display = 'block';
 
     fetch(`${backendBase}/api/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => {
-        if(!res.ok) throw new Error("Session expired - please login again");
+        if(!res.ok) {
+            localStorage.removeItem('token');
+            window.location.reload();
+            throw new Error("Session expired - reverting to guest status");
+        }
         return res.json();
     })
     .then(user => {
-        document.querySelector('.avatar-circle').innerText = user.name.substring(0,2).toUpperCase();
-        document.querySelector('.user-avatar h3').innerText = user.name;
-        document.querySelector('.badge').innerText = `GreenScore - ${user.ecoScore} Points 🌿`;
+        document.getElementById('profileInitials').innerText = user.name.substring(0,2).toUpperCase();
+        document.getElementById('profileName').innerText = user.name;
+        document.getElementById('profileBadge').innerText = `GreenScore - ${user.ecoScore} Points 🌿`;
+        document.getElementById('profileBadge').style.display = 'block';
 
         const inputs = document.querySelectorAll('.input-group input');
         if(inputs.length >= 5) {
