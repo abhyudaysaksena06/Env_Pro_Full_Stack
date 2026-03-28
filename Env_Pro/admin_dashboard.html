@@ -5,6 +5,26 @@
   <title>GreenScore - Admin Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style2.css">
+  
+  <script>
+    // CRITICAL: Synchronous pre-render Wall.
+    // Blocks the browser from rendering the HTML body if the user is not locally authenticated as admin.
+    (function checkAuthBeforeRender() {
+        const localToken = localStorage.getItem('token');
+        if (!localToken) {
+            window.location.replace("login.html");
+            return;
+        }
+        try {
+            const localUser = JSON.parse(localStorage.getItem('user'));
+            if (!localUser || localUser.role !== 'admin') {
+                window.location.replace("login.html");
+            }
+        } catch(e) {
+            window.location.replace("login.html");
+        }
+    })();
+  </script>
 </head>
 <body>
   <div class="bg"></div>
@@ -157,18 +177,15 @@
     window.backendBase = 'https://env-pro-full-stack.onrender.com';
     const token = localStorage.getItem('token');
     
-    // Auth Check
-    if(!token) window.location.href = "login.html";
-
-    // Global verify
+    // Server-side Double Validation
     fetch(`${backendBase}/api/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
     }).then(res => res.json()).then(user => {
         if(user.role !== 'admin') {
-            document.getElementById('adminError').innerHTML = "<b>SECURITY BREACH DETECTED:</b> This incident has been logged. You do not have administrator permissions.";
-            document.querySelector('.content-area').style.border = "2px solid #ef4444";
-            document.querySelectorAll('input, button, select').forEach(el => el.disabled = true);
+            document.body.innerHTML = "<h2 style='text-align:center;color:#ef4444;margin-top:100px;'>ACCESS DENIED</h2>";
+            setTimeout(() => window.location.href = "login.html", 1500);
         } else {
+            document.body.style.display = 'block'; // Failsafe display if needed
             loadDatabases();
         }
     }).catch(err => {
