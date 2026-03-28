@@ -21,33 +21,48 @@
   </div>
 
   <section class="profile-dashboard" style="display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding-top:150px; padding-bottom:50px; box-sizing:border-box;">
-    <div class="content-area fade-in visible" style="max-width:800px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.3);">
+    <div class="content-area fade-in visible" style="max-width:1000px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.3);">
       <h2 style="color:#ef4444; font-size:32px;">RESTRICTED: Authority Dashboard</h2>
-      <p style="color:var(--muted); margin-bottom:30px;">Manage Hostels, Global Scores, and Marketplace Operations.</p>
+      <p style="color:var(--muted); margin-bottom:30px;">Direct Database Editor: Manage Users, Hostels, Global Scores, and Marketplace Operations.</p>
       
       <div id="adminError" style="color:#ef4444; font-size:16px; margin-bottom:20px; text-align:center;"></div>
       
-      <!-- Award Points Section -->
-      <h3 style="color:var(--accent); margin-top:20px;">Award GreenScore Points</h3>
-      <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-top:10px;">
-        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Target a specific user by their database ID to manually boost their ecoScore and their Hostel's ranking simultaneously.</p>
-        <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-          <input type="text" id="targetUserId" placeholder="Target User ID" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
-          <input type="number" id="targetPoints" placeholder="Points to Add (e.g. 50)" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
-          <button class="btn" onclick="awardPoints()" style="background:#ef4444; color:white; font-weight:700;">Execute Transaction</button>
-        </div>
-        <div id="awardMsg" style="color:#4ade80; margin-top:10px; font-size:14px; display:none;"></div>
+      <!-- Users Database Section -->
+      <h3 style="color:var(--accent); margin-top:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Users Database</h3>
+      <div style="background:rgba(255,255,255,0.02); border-radius:12px; margin-top:15px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; min-width:700px;">
+          <thead>
+            <tr style="background:rgba(0,0,0,0.3); color:var(--muted);">
+              <th style="padding:15px; font-weight:600;">Name</th>
+              <th style="padding:15px; font-weight:600;">Email</th>
+              <th style="padding:15px; font-weight:600;">Role</th>
+              <th style="padding:15px; font-weight:600;">Score</th>
+              <th style="padding:15px; font-weight:600; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Users Data...</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- Moderation Section -->
-      <h3 style="color:var(--accent); margin-top:40px;">Marketplace Moderation</h3>
-      <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-top:10px;">
-        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Force-delete inappropriate E-Waste listings globally from Atlas.</p>
-        <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
-          <input type="text" id="targetListingId" placeholder="Target Listing Item ID (e.g. 64b8a2...)" style="padding:10px; border-radius:8px; border:none; background:rgba(0,0,0,0.5); color:white;">
-          <button class="btn" onclick="deleteListing()" style="background:#ef4444; color:white; font-weight:700;">Purge Listing</button>
-        </div>
-        <div id="deleteMsg" style="color:#4ade80; margin-top:10px; font-size:14px; display:none;"></div>
+      <!-- Marketplace Database Section -->
+      <h3 style="color:var(--accent); margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Marketplace Listings</h3>
+      <div style="background:rgba(255,255,255,0.02); border-radius:12px; margin-top:15px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; min-width:700px;">
+          <thead>
+            <tr style="background:rgba(0,0,0,0.3); color:var(--muted);">
+              <th style="padding:15px; font-weight:600;">Item Name</th>
+              <th style="padding:15px; font-weight:600;">Listed By</th>
+              <th style="padding:15px; font-weight:600;">Price</th>
+              <th style="padding:15px; font-weight:600;">Status</th>
+              <th style="padding:15px; font-weight:600; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTableBody">
+            <tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Listings Data...</td></tr>
+          </tbody>
+        </table>
       </div>
       
     </div>
@@ -60,54 +75,146 @@
     // Auth Check
     if(!token) window.location.href = "login.html";
 
-    // Verify Admin Role locally first (Server also checks)
+    // Global verify
     fetch(`${backendBase}/api/users/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
     }).then(res => res.json()).then(user => {
         if(user.role !== 'admin') {
             document.getElementById('adminError').innerHTML = "<b>SECURITY BREACH DETECTED:</b> This incident has been logged. You do not have administrator permissions.";
             document.querySelector('.content-area').style.border = "2px solid #ef4444";
-            document.querySelectorAll('input, button').forEach(el => el.disabled = true);
+            document.querySelectorAll('input, button, select').forEach(el => el.disabled = true);
+        } else {
+            loadDatabases();
         }
     }).catch(err => {
         window.location.href = "login.html";
     });
 
-    async function awardPoints() {
-        const id = document.getElementById('targetUserId').value;
-        const pts = document.getElementById('targetPoints').value;
-        if(!id || !pts) return alert("Fill out fields");
+    async function loadDatabases() {
+        try {
+            const [usersRes, itemsRes] = await Promise.all([
+                fetch(`${backendBase}/api/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${backendBase}/api/items`)
+            ]);
+            
+            const users = await usersRes.json();
+            const items = await itemsRes.json();
+            
+            renderUsers(users);
+            renderItems(items);
+        } catch(err) {
+            console.error("Database sync failed", err);
+            document.getElementById('adminError').innerText = "Failed to sync with backend databases.";
+        }
+    }
+
+    function renderUsers(users) {
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+        if(users.length === 0 || users.error) {
+            tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#ef4444">${users.error || "No users found"}</td></tr>`;
+            return;
+        }
+
+        users.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+            
+            const roleColor = u.role === 'admin' ? '#ef4444' : 'white';
+            const actionHtml = u.role === 'admin' 
+                ? `<span style="color:#ef4444; font-size:12px; padding:6px 10px; font-weight:bold;">PROTECTED</span>`
+                : `
+                   <div style="display:flex; justify-content:flex-end; gap:5px;">
+                     <button onclick="awardScorePrompt('${u._id}', '${u.name}')" style="background:#4ade80; color:black; border:none; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">+ Pts</button>
+                     <button onclick="deleteUser('${u._id}', '${u.name}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Delete</button>
+                   </div>
+                  `;
+
+            tr.innerHTML = `
+                <td style="padding:15px; color:${roleColor};">${u.name}</td>
+                <td style="padding:15px; color:var(--muted);">${u.email}</td>
+                <td style="padding:15px; color:${roleColor}; font-weight:bold;">${u.role.toUpperCase()}</td>
+                <td style="padding:15px; color:#4ade80; font-weight:bold;">${u.ecoScore}</td>
+                <td style="padding:15px; text-align:right;">${actionHtml}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderItems(items) {
+        const tbody = document.getElementById('itemsTableBody');
+        tbody.innerHTML = '';
+        if(items.length === 0 || items.error) {
+            tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">${items.error || "Marketplace is empty."}</td></tr>`;
+            return;
+        }
+
+        items.forEach(i => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+            tr.innerHTML = `
+                <td style="padding:15px; color:white; font-weight:500;">${i.itemName}</td>
+                <td style="padding:15px; color:var(--muted);">${i.listedBy}</td>
+                <td style="padding:15px; color:var(--accent); font-weight:bold;">${i.itemPrice}</td>
+                <td style="padding:15px;">${i.status}</td>
+                <td style="padding:15px; text-align:right;">
+                  <button onclick="deleteListing('${i._id}', '${i.itemName}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Purge</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function awardScorePrompt(userId, userName) {
+        const pts = prompt(`How many exact GreenScore points would you like to award to ${userName}?`);
+        if(!pts || isNaN(pts)) return;
         
         try {
             const res = await fetch(`${backendBase}/api/admin/score/user`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: id, points: pts })
+                body: JSON.stringify({ userId: userId, points: pts })
             });
             const data = await res.json();
             if(!res.ok) throw new Error(data.error || data.message || "Execution Failed");
-            
-            document.getElementById('awardMsg').innerText = data.message;
-            document.getElementById('awardMsg').style.display = "block";
+            alert(data.message);
+            loadDatabases();
         } catch(err) {
             alert(err.message);
         }
     }
 
-    async function deleteListing() {
-        const id = document.getElementById('targetListingId').value;
-        if(!id) return alert("Provide a valid listing ID");
+    async function deleteUser(userId, userName) {
+        const confirmDel = confirm(`CRITICAL: Are you absolutely sure you want to permanently delete user: ${userName}? \nThis cannot be undone!`);
+        if(!confirmDel) return;
 
         try {
-            const res = await fetch(`${backendBase}/api/admin/items/${id}`, {
+            const res = await fetch(`${backendBase}/api/admin/users/${userId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             if(!res.ok) throw new Error(data.error || data.message || "Failed");
-            
-            document.getElementById('deleteMsg').innerText = data.message;
-            document.getElementById('deleteMsg').style.display = "block";
+            alert(data.message);
+            loadDatabases();
+        } catch(err) {
+            alert(err.message);
+        }
+    }
+
+    async function deleteListing(itemId, itemName) {
+        const confirmDel = confirm(`Are you sure you want to purge listing: ${itemName}?`);
+        if(!confirmDel) return;
+
+        try {
+            const res = await fetch(`${backendBase}/api/admin/items/${itemId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || data.message || "Failed");
+            alert(data.message);
+            loadDatabases();
         } catch(err) {
             alert(err.message);
         }

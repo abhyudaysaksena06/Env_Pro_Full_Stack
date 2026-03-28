@@ -223,6 +223,30 @@ app.get('/api/items', async (req, res) => {
 });
 
 // --- ADMIN ROUTES ---
+app.get('/api/admin/users', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const users = await User.find().select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({error: 'Failed to retrieve user database overview.'});
+    }
+});
+
+app.delete('/api/admin/users/:id', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if(!user) return res.status(404).json({error: "User not found"});
+        if(user.role === 'admin') return res.status(403).json({error: "Cannot delete an administrator account."});
+        
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ message: "User account permanently deleted" });
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to locate and delete user"});
+    }
+});
+
 app.put('/api/admin/score/user', authMiddleware, isAdmin, async (req, res) => {
     try {
         const { userId, points } = req.body;

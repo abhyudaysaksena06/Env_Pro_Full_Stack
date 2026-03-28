@@ -42,17 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inputs[4].value = user.phone || "Not Provided"; // Phone
         }
 
-        if(user.role === 'admin') {
-            const navMenu = document.querySelector('.menu');
-            if(navMenu) {
-                const adminLink = document.createElement('a');
-                adminLink.href = "admin_dashboard.html";
-                adminLink.className = "link admin-link";
-                adminLink.style.color = "#ef4444";
-                adminLink.innerHTML = `<span class="link-title">Admin Dash</span>`;
-                navMenu.appendChild(adminLink);
-            }
-        }
+        // Admin Nav Injection removed to use global script logic
 
         // Fetch User's Active Listings 
         fetch(`${backendBase}/api/items`)
