@@ -1,10 +1,10 @@
-window.backendBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') 
-    ? 'http://localhost:3000' 
-    : 'https://env-pro-full-stack.onrender.com';
+window.backendBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+  ? 'http://localhost:3000'
+  : 'https://env-pro-full-stack.onrender.com';
 
 function renderCards(data, id) {
   const container = document.getElementById(id);
-  if (!container) return; 
+  if (!container) return;
   container.innerHTML = ""; // Clear existing before rendering
 
   data.forEach((item, i) => {
@@ -25,35 +25,35 @@ function renderCards(data, id) {
 async function loadHomeLeaderboards() {
   const hostelContainer = document.getElementById("hostelCards");
   const individualContainer = document.getElementById("individualCards");
-  
-  if(!hostelContainer || !individualContainer) return; // Only process on homepage!
+
+  if (!hostelContainer || !individualContainer) return; // Only process on homepage!
 
   try {
     const [hRes, iRes] = await Promise.all([
-        fetch(`${backendBase}/api/leaderboard/hostel`),
-        fetch(`${backendBase}/api/leaderboard/individual`)
+      fetch(`${backendBase}/api/leaderboard/hostel`),
+      fetch(`${backendBase}/api/leaderboard/individual`)
     ]);
-    
-    if(hRes.ok && iRes.ok) {
-        const liveHostels = await hRes.json();
-        const liveUsers = await iRes.json();
-        
-        let topHostels = liveHostels.map(h => ({ name: h.hostelName, score: h.totalScore })).sort((a,b) => b.score - a.score).slice(0, 3);
-        let topUsers = liveUsers.map(u => ({ name: u.name, score: u.ecoScore })).sort((a,b) => b.score - a.score).slice(0, 3);
-        
-        // Failsafe rendering if DB is completely empty early on
-        if(topHostels.length === 0) topHostels = [{name: 'Hostel J', score: 100}, {name: 'Hostel M', score: 80}, {name: 'Hostel E', score: 60}];
-        if(topUsers.length === 0) topUsers = [{name: 'Admin', score: 100}, {name: 'Eco Warrior', score: 90}, {name: 'Student', score: 80}];
-        
-        renderCards(topHostels, "hostelCards");
-        renderCards(topUsers, "individualCards");
+
+    if (hRes.ok && iRes.ok) {
+      const liveHostels = await hRes.json();
+      const liveUsers = await iRes.json();
+
+      let topHostels = liveHostels.map(h => ({ name: h.hostelName, score: h.totalScore })).sort((a, b) => b.score - a.score).slice(0, 3);
+      let topUsers = liveUsers.map(u => ({ name: u.name, score: u.ecoScore })).sort((a, b) => b.score - a.score).slice(0, 3);
+
+      // Failsafe rendering if DB is completely empty early on
+      if (topHostels.length === 0) topHostels = [{ name: 'Hostel J', score: 100 }, { name: 'Hostel M', score: 80 }, { name: 'Hostel E', score: 60 }];
+      if (topUsers.length === 0) topUsers = [{ name: 'Admin', score: 100 }, { name: 'Eco Warrior', score: 90 }, { name: 'Student', score: 80 }];
+
+      renderCards(topHostels, "hostelCards");
+      renderCards(topUsers, "individualCards");
     }
-  } catch(err) {
+  } catch (err) {
     console.error("Home Leaderboard fetch failed, running mock fallbacks.", err);
-    
+
     // Fallback to static lists
-    const hostels = [ { name: "HOSTEL H", score: 82 }, { name: "HOSTEL M", score: 75 }, { name: "HOSTEL E", score: 68 } ];
-    const individuals = [ { name: "REDDIT USER", score: 85 }, { name: "SAAAAAAANVI", score: 78 }, { name: "INSTA USER", score: 74 } ];
+    const hostels = [{ name: "HOSTEL H", score: 82 }, { name: "HOSTEL M", score: 75 }, { name: "HOSTEL E", score: 68 }];
+    const individuals = [{ name: "REDDIT USER", score: 85 }, { name: "SAAAAAAANVI", score: 78 }, { name: "INSTA USER", score: 74 }];
     renderCards(hostels, "hostelCards");
     renderCards(individuals, "individualCards");
   }
@@ -66,7 +66,7 @@ let countersStarted = false;
 
 if (statsSection) {
   const statsObserver = new IntersectionObserver((entries) => {
-    if(entries[0].isIntersecting && !countersStarted) {
+    if (entries[0].isIntersecting && !countersStarted) {
       countersStarted = true;
       document.querySelectorAll(".counter").forEach((counter) => {
         let target = +counter.dataset.target;
@@ -85,7 +85,7 @@ if (statsSection) {
           }
         };
         // Add random slight stagger to counters popping off
-        setTimeout(update, Math.random() * 400); 
+        setTimeout(update, Math.random() * 400);
       });
     }
   }, { threshold: 0.4 });
@@ -103,81 +103,81 @@ document.addEventListener("mousemove", (e) => {
 
 /* GSAP PRELOADER */
 function initPreloader() {
-    const loader = document.getElementById("loader");
+  const loader = document.getElementById("loader");
 
-    // Only show preloader once per session
-    if (sessionStorage.getItem('preloaderShown') === 'true') {
-        if (loader) loader.style.display = 'none';
-        gsap.set(".nav-container, .hero, section, footer", { visibility: "visible" });
-        return;
-    }
-    
-    sessionStorage.setItem('preloaderShown', 'true');
+  // Only show preloader once per session
+  if (sessionStorage.getItem('preloaderShown') === 'true') {
+    if (loader) loader.style.display = 'none';
+    gsap.set(".nav-container, .hero, section, footer", { visibility: "visible" });
+    return;
+  }
 
-    let tl = gsap.timeline();
-    const words = document.querySelectorAll(".loader-text");
+  sessionStorage.setItem('preloaderShown', 'true');
 
-    // Sundown-style rolling text transition
-    words.forEach((word) => {
-        tl.to(word, {
-            opacity: 1,
-            y: "0%",
-            duration: 0.5,
-            ease: "power3.out"
-        })
-        .to(word, {
-            opacity: 0,
-            y: "-100%",
-            duration: 0.4,
-            ease: "power3.in"
-        }, "+=0.2"); // Brief pause at center
-    });
+  let tl = gsap.timeline();
+  const words = document.querySelectorAll(".loader-text");
 
-    // Final Wipe Reveal
-    tl.to("#loader", {
+  // Sundown-style rolling text transition
+  words.forEach((word) => {
+    tl.to(word, {
+      opacity: 1,
+      y: "0%",
+      duration: 0.5,
+      ease: "power3.out"
+    })
+      .to(word, {
+        opacity: 0,
         y: "-100%",
-        duration: 1,
-        ease: "expo.inOut",
-        onStart: function() {
-            gsap.set(".nav-container, .hero, section, footer", { visibility: "visible" });
-        }
-    }, "-=0.3");
+        duration: 0.4,
+        ease: "power3.in"
+      }, "+=0.2"); // Brief pause at center
+  });
 
-    // Hero content entrance (if hero exists on page)
-    if (document.querySelector(".hero")) {
-        tl.from(".hero h1, .hero p", {
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power4.out"
-        }, "-=0.5");
+  // Final Wipe Reveal
+  tl.to("#loader", {
+    y: "-100%",
+    duration: 1,
+    ease: "expo.inOut",
+    onStart: function () {
+      gsap.set(".nav-container, .hero, section, footer", { visibility: "visible" });
     }
+  }, "-=0.3");
+
+  // Hero content entrance (if hero exists on page)
+  if (document.querySelector(".hero")) {
+    tl.from(".hero h1, .hero p", {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: "power4.out"
+    }, "-=0.5");
+  }
 }
 
 window.addEventListener("load", initPreloader);
 
 /* MOBILE MENU TOGGLE AND AUTH POPUP */
 document.addEventListener("DOMContentLoaded", () => {
-    const hamburger = document.querySelector(".hamburger");
-    const menu = document.querySelector(".menu");
-    if(hamburger && menu) {
-        hamburger.addEventListener("click", () => {
-            hamburger.classList.toggle("active");
-            menu.classList.toggle("active");
-        });
-    }
+  const hamburger = document.querySelector(".hamburger");
+  const menu = document.querySelector(".menu");
+  if (hamburger && menu) {
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("active");
+      menu.classList.toggle("active");
+    });
+  }
 
-    // Global Login Prompt 
-    const token = localStorage.getItem('token');
-    const path = window.location.pathname;
-    const isAuthPage = path.includes('login.html') || path.includes('register.html');
-    
-    if(!token && !isAuthPage && !sessionStorage.getItem('popupDismissed')) {
-        const popup = document.createElement('div');
-        popup.id = 'authPopup';
-        popup.style = "position:fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
-        popup.innerHTML = `
+  // Global Login Prompt 
+  const token = localStorage.getItem('token');
+  const path = window.location.pathname;
+  const isAuthPage = path.includes('login.html') || path.includes('register.html');
+
+  if (!token && !isAuthPage && !sessionStorage.getItem('popupDismissed')) {
+    const popup = document.createElement('div');
+    popup.id = 'authPopup';
+    popup.style = "position:fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+    popup.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
                 <h3 style="color:white; font-size:18px;">Join GreenScore 🌱</h3>
                 <button onclick="sessionStorage.setItem('popupDismissed', 'true'); document.getElementById('authPopup').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer;" aria-label="Close">&times;</button>
@@ -187,31 +187,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button onclick="window.location.href='login.html'" class="btn" style="padding:10px 20px; font-size:14px; width:100%; background:#4ade80; color:black; font-weight:600; text-align:center;">Secure Portal Login</button>
             </div>
         `;
-        document.body.appendChild(popup);
-        
-        // Wait for preloader to finish, then slide in
-        setTimeout(() => {
-            popup.style.transform = "translateY(0)";
-            popup.style.opacity = "1";
-        }, 2500);
-    }
+    document.body.appendChild(popup);
+
+    // Wait for preloader to finish, then slide in
+    setTimeout(() => {
+      popup.style.transform = "translateY(0)";
+      popup.style.opacity = "1";
+    }, 2500);
+  }
 });
 
 /* ADMIN NAVBAR INJECTION */
 document.addEventListener("DOMContentLoaded", () => {
-    try {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            const user = JSON.parse(userStr);
-            if (user && user.role === 'admin') {
-                const navMenu = document.querySelector('.menu');
-                if (navMenu && !document.querySelector('.admin-link')) {
-                    const adminLink = document.createElement('a');
-                    adminLink.href = "admin_dashboard.html";
-                    adminLink.className = "link admin-link";
-                    adminLink.style.color = "#ef4444";
-                    
-                    adminLink.innerHTML = `
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user && user.role === 'admin') {
+        const navMenu = document.querySelector('.menu');
+        if (navMenu && !document.querySelector('.admin-link')) {
+          const adminLink = document.createElement('a');
+          adminLink.href = "admin_dashboard.html";
+          adminLink.className = "link admin-link";
+          adminLink.style.color = "#ef4444";
+
+          adminLink.innerHTML = `
                       <span class="link-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -219,13 +219,13 @@ document.addEventListener("DOMContentLoaded", () => {
                       </span>
                       <span class="link-title" style="color:#ef4444;">Admin Portal</span>
                     `;
-                    navMenu.appendChild(adminLink);
-                }
-            }
+          navMenu.appendChild(adminLink);
         }
-    } catch(e) {
-        console.error("Admin eval bypass filter: ", e);
+      }
     }
+  } catch (e) {
+    console.error("Admin eval bypass filter: ", e);
+  }
 });
 
 /* SCROLL ANIMATION */
@@ -281,7 +281,7 @@ function calculateImpact() {
     analogy = "<p>Please enter valid usage data to see your impact.</p>";
   }
 
-const resultBox = document.getElementById("impactResult");
+  const resultBox = document.getElementById("impactResult");
   resultBox.innerHTML = analogy;
   resultBox.style.display = "block";
 }
@@ -289,11 +289,11 @@ const resultBox = document.getElementById("impactResult");
 /* NAVBAR SCROLL */
 const navContainer = document.getElementById('navContainer');
 if (navContainer) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navContainer.classList.add('scrolled');
-        } else {
-            navContainer.classList.remove('scrolled');
-        }
-    });
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navContainer.classList.add('scrolled');
+    } else {
+      navContainer.classList.remove('scrolled');
+    }
+  });
 }
