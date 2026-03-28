@@ -114,10 +114,10 @@ const User = mongoose.model('User', UserSchema);
 
 const HostelSchema = new mongoose.Schema({
     hostelName: { type: String, required: true, unique: true },
-    waterSaving: { type: Number, default: 0 },
-    foodWaste: { type: Number, default: 0 },
-    co2Control: { type: Number, default: 0 },
-    totalScore: { type: Number, default: 0 },
+    waterWastedLiters: { type: Number, default: 0 },
+    foodWastedKg: { type: Number, default: 0 },
+    co2EmittedKg: { type: Number, default: 0 },
+    totalScore: { type: Number, default: 10000 },
     memberCount: { type: Number, default: 0 }
 });
 
@@ -262,14 +262,20 @@ app.get('/api/admin/hostels', authMiddleware, isAdmin, async (req, res) => {
 
 app.post('/api/admin/hostels', authMiddleware, isAdmin, async (req, res) => {
     try {
-        const { hostelName, waterSaving, foodWaste, co2Control, memberCount } = req.body;
-        const totalScore = Number(waterSaving || 0) + Number(foodWaste || 0) + Number(co2Control || 0);
+        const { hostelName, waterWastedLiters, foodWastedKg, co2EmittedKg, memberCount } = req.body;
+        
+        const w = Number(waterWastedLiters || 0);
+        const f = Number(foodWastedKg || 0);
+        const c = Number(co2EmittedKg || 0);
+        
+        // Cumulative Points Algorithm: Base 10000 points. Lower mass = Better Score.
+        const totalScore = Math.max(0, 10000 - (w * 1) - (f * 50) - (c * 10));
 
         const newHostel = new Hostel({
             hostelName,
-            waterSaving: Number(waterSaving || 0),
-            foodWaste: Number(foodWaste || 0),
-            co2Control: Number(co2Control || 0),
+            waterWastedLiters: w,
+            foodWastedKg: f,
+            co2EmittedKg: c,
             totalScore: totalScore,
             memberCount: Number(memberCount || 0)
         });
@@ -285,20 +291,24 @@ app.post('/api/admin/hostels', authMiddleware, isAdmin, async (req, res) => {
 
 app.put('/api/admin/hostels/:id', authMiddleware, isAdmin, async (req, res) => {
     try {
-        const { waterSaving, foodWaste, co2Control, memberCount } = req.body;
+        const { waterWastedLiters, foodWastedKg, co2EmittedKg, memberCount } = req.body;
         const hostel = await Hostel.findById(req.params.id);
         if(!hostel) return res.status(404).json({error: "Hostel not found"});
 
-        if(waterSaving !== undefined) hostel.waterSaving = Number(waterSaving);
-        if(foodWaste !== undefined) hostel.foodWaste = Number(foodWaste);
-        if(co2Control !== undefined) hostel.co2Control = Number(co2Control);
+        if(waterWastedLiters !== undefined) hostel.waterWastedLiters = Number(waterWastedLiters);
+        if(foodWastedKg !== undefined) hostel.foodWastedKg = Number(foodWastedKg);
+        if(co2EmittedKg !== undefined) hostel.co2EmittedKg = Number(co2EmittedKg);
         if(memberCount !== undefined) hostel.memberCount = Number(memberCount);
         
-        // Auto Cumulative Re-Calculation
-        hostel.totalScore = hostel.waterSaving + hostel.foodWaste + hostel.co2Control;
+        // Auto Cumulative Re-Calculation Algorithm
+        const w = hostel.waterWastedLiters;
+        const f = hostel.foodWastedKg;
+        const c = hostel.co2EmittedKg;
+        
+        hostel.totalScore = Math.max(0, 10000 - (w * 1) - (f * 50) - (c * 10));
         
         await hostel.save();
-        res.json({ message: 'Cumulative metrics updated.', hostel });
+        res.json({ message: 'Advanced metrics synced & rank calculated.', hostel });
     } catch(err) {
         console.error(err);
         res.status(500).json({error: "Failed to sync hostel variables."});

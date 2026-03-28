@@ -137,9 +137,9 @@
           <thead>
             <tr style="background:rgba(0,0,0,0.3); color:var(--muted);">
               <th style="padding:15px; font-weight:600;">Hostel Name</th>
-              <th style="padding:15px; font-weight:600;">💧 Water</th>
-              <th style="padding:15px; font-weight:600;">♻️ Food</th>
-              <th style="padding:15px; font-weight:600;">🌫️ CO2</th>
+              <th style="padding:15px; font-weight:600;">💧 Water (L)</th>
+              <th style="padding:15px; font-weight:600;">♻️ Food (kg)</th>
+              <th style="padding:15px; font-weight:600;">🌫️ CO2 (kg)</th>
               <th style="padding:15px; font-weight:600; color:#4ade80;">Cumulative Ranking</th>
               <th style="padding:15px; font-weight:600; text-align:right;">Actions</th>
             </tr>
@@ -322,12 +322,12 @@
             tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
             tr.innerHTML = `
                 <td style="padding:15px; color:white; font-weight:600; font-size:15px;">${h.hostelName}</td>
-                <td style="padding:15px; color:#38bdf8;">${h.waterSaving}</td>
-                <td style="padding:15px; color:#facc15;">${h.foodWaste}</td>
-                <td style="padding:15px; color:#a78bfa;">${h.co2Control}</td>
+                <td style="padding:15px; color:#38bdf8;">${h.waterWastedLiters} L</td>
+                <td style="padding:15px; color:#facc15;">${h.foodWastedKg} kg</td>
+                <td style="padding:15px; color:#a78bfa;">${h.co2EmittedKg} kg</td>
                 <td style="padding:15px; color:#4ade80; font-weight:700; font-size:16px;">${h.totalScore}</td>
                 <td style="padding:15px; text-align:right;">
-                  <button onclick="editHostelPrompt('${h._id}', '${h.hostelName}', ${h.waterSaving}, ${h.foodWaste}, ${h.co2Control})" style="background:rgba(255,255,255,0.1); color:white; border:none; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer; margin-right:5px;">Edit Metrics</button>
+                  <button onclick="editHostelPrompt('${h._id}', '${h.hostelName}', ${h.waterWastedLiters}, ${h.foodWastedKg}, ${h.co2EmittedKg})" style="background:rgba(255,255,255,0.1); color:white; border:none; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer; margin-right:5px;">Edit Metrics</button>
                   <button onclick="deleteHostel('${h._id}', '${h.hostelName}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Delete</button>
                 </td>
             `;
@@ -357,11 +357,11 @@
     }
 
     async function editHostelPrompt(id, name, w, f, c) {
-        const nextW = prompt(`Enter new Water Saving points for ${name}:`, w);
+        const nextW = prompt(`Enter exact Water Wasted (in Liters) for ${name}:`, w);
         if(nextW === null) return;
-        const nextF = prompt(`Enter new Food Waste points for ${name}:`, f);
+        const nextF = prompt(`Enter exact Food Wasted (in kg) for ${name}:`, f);
         if(nextF === null) return;
-        const nextC = prompt(`Enter new CO2 Control points for ${name}:`, c);
+        const nextC = prompt(`Enter exact CO2 Emitted (in kg) for ${name}:`, c);
         if(nextC === null) return;
 
         try {
@@ -369,9 +369,9 @@
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    waterSaving: nextW,
-                    foodWaste: nextF,
-                    co2Control: nextC
+                    waterWastedLiters: nextW,
+                    foodWastedKg: nextF,
+                    co2EmittedKg: nextC
                 })
             });
             const data = await res.json();
