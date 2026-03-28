@@ -114,24 +114,10 @@
           <input type="password" id="password" required placeholder="••••••••">
         </div>
         <div id="registerError" style="color:#ef4444; font-size:13px; text-align:center; min-height:15px;"></div>
-        <button type="submit" class="btn active" style="margin-top:10px;">Send Verification Codes</button>
+        <button type="submit" class="btn active" style="margin-top:10px;">Create Account</button>
       </form>
 
-      <!-- 2FA OTP VERIFICATION FORM (Hidden Initially) -->
-      <form id="otpForm" class="form-grid" style="grid-template-columns:1fr; display:none;">
-        <h3 style="color:#4ade80; text-align:center; margin-bottom:5px;">Check Your Inbox</h3>
-        <p style="text-align:center; color:var(--muted); font-size:13px; margin-bottom:20px; line-height:1.5;">We just dispatched a 6-digit Secure PIN to your <b>Email</b>. Enter it below to establish your identity.</p>
-        
-        <div class="input-group">
-          <label>Email Validation PIN</label>
-          <input type="text" id="emailOtp" required placeholder="------" maxlength="6" style="text-align:center; font-size:20px; letter-spacing:10px;">
-        </div>
 
-        
-        <div id="otpError" style="color:#ef4444; font-size:13px; text-align:center; min-height:15px;"></div>
-        <button type="submit" class="btn active" style="margin-top:10px; background:#4ade80; color:black; font-weight:bold;">Authenticate & Initialize</button>
-      </form>
-      
       <p style="text-align:center; margin-top:15px; font-size:14px; color:var(--muted);">
         Already have an account? <a href="login.html" style="color:var(--accent); text-decoration:none;">Log in instead</a>
       </p>

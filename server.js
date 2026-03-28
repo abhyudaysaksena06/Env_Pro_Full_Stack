@@ -19,9 +19,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Temporary memory store for 2FA pipeline (Email -> { emailOtp, phoneOtp, userData })
-const otpCache = new Map();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -162,54 +159,13 @@ const isAdmin = (req, res, next) => {
 
 // --- AUTHENTICATION ROUTES ---
 
-// 2FA STEP 1: Generate & Dispatch OTPs
-app.post('/api/auth/send-otp', async (req, res) => {
+// API route for synchronous immediate registration
+app.post('/api/auth/register', async (req, res) => {
     try {
         const { name, email, rollNumber, password, phone, hostelName } = req.body;
         
-        // Anti-Spam / Anti-Duplicate check
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
-
-        // Generate rigorous 6-digit PINs
-        const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Save payload securely in Volatile Memory
-        otpCache.set(email, {
-            emailOtp,
-            userData: { name, email, rollNumber, password, phone, hostelName }
-        });
-
-        // Dispatch Email
-        const mailOptions = {
-            from: 'mr.developer4u@gmail.com',
-            to: email,
-            subject: 'GreenScore - Your Verification PIN',
-            text: `Welcome to GreenScore! Your 6-digit Authentication Code is: ${emailOtp}`
-        };
-        await transporter.sendMail(mailOptions);
-
-        res.status(200).json({ message: "Authentication dispatched." });
-    } catch(err) {
-        console.error("OTP Dispatch Failure:", err);
-        res.status(500).json({ error: 'Failed to send verification code to your email.' });
-    }
-});
-
-// 2FA STEP 2: Validate PINs & Mint User Document
-app.post('/api/auth/register', async (req, res) => {
-    try {
-        const { email, emailOtp } = req.body;
-        
-        const cachedSession = otpCache.get(email);
-        if(!cachedSession) return res.status(400).json({ message: 'Registration session expired. Please restart.' });
-
-        if(cachedSession.emailOtp !== emailOtp) {
-            return res.status(400).json({ message: 'Invalid OTP configurations. Access Denied.' });
-        }
-
-        // OTPs matched! Extract volatile data payload
-        const { name, rollNumber, password, phone, hostelName } = cachedSession.userData;
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -217,9 +173,6 @@ app.post('/api/auth/register', async (req, res) => {
         const user = new User({ name, email, rollNumber, password: hashedPassword, phone, hostelName });
         await user.save();
         
-        // Scrub trace to prevent replay attacks
-        otpCache.delete(email);
-
         const token = jwt.sign({ id: user.id, role: user.role, name: user.name, email: user.email }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '7d' });
         res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, ecoScore: user.ecoScore } });
     } catch (err) {
