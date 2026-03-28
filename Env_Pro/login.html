@@ -85,11 +85,6 @@
       <h2 style="color:var(--accent); text-align:center;">Welcome Back</h2>
       <p style="text-align:center; color:var(--muted); margin-bottom:20px;">Log in to access your dashboard</p>
 
-      <div class="tab-switcher" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-        <button id="emailTabBtn" class="btn active" style="padding:8px 16px; min-width:120px; font-size:14px;">Email</button>
-        <button id="phoneTabBtn" class="btn" style="padding:8px 16px; min-width:120px; font-size:14px; background:rgba(255,255,255,0.05); color:white;">Phone (OTP)</button>
-      </div>
-
       <form id="loginForm" class="form-grid" style="grid-template-columns:1fr;">
         <div class="input-group">
           <label>Email Address</label>
@@ -101,21 +96,6 @@
         </div>
         <div id="loginError" style="color:#ef4444; font-size:13px; text-align:center; min-height:15px;"></div>
         <button type="submit" class="btn active" style="margin-top:10px;">Secure Login</button>
-      </form>
-
-      <form id="phoneLoginForm" class="form-grid" style="grid-template-columns:1fr; display:none;">
-        <div class="input-group" id="phoneInputGroup">
-          <label>Registered Phone Number</label>
-          <input type="tel" id="loginPhone" required placeholder="10-digit mobile number">
-        </div>
-        
-        <div class="input-group" id="otpInputGroup" style="display:none;">
-          <label>6-Digit Verification Code</label>
-          <input type="text" id="loginOtp" placeholder="000000">
-        </div>
-
-        <div id="phoneLoginError" style="color:#ef4444; font-size:13px; text-align:center; min-height:15px;"></div>
-        <button type="submit" id="phoneLoginBtn" class="btn active" style="margin-top:10px;">Send OTP</button>
       </form>
 
       <p style="text-align:center; margin-top:15px; font-size:14px; color:var(--muted);">

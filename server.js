@@ -9,13 +9,6 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const twilio = require('twilio');
-
-// SMS setup
-const twilioClient = twilio(
-    process.env.TWILIO_ACCOUNT_SID, 
-    process.env.TWILIO_AUTH_TOKEN
-);
 
 // Email setup
 const transporter = nodemailer.createTransport({
@@ -105,6 +98,15 @@ const ItemSchema = new mongoose.Schema({
     listedBy: String,
     photoUrl: String, // Natively captures absolute https:// URLs from Cloudinary CDNs!
     status: { type: String, default: 'Available' },
+    interestedBuyers: [{
+        buyerId: String,
+        name: String,
+        email: String,
+        phone: String,
+        hostelName: String,
+        rollNumber: String,
+        claimedAt: { type: Date, default: Date.now }
+    }],
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -171,12 +173,10 @@ app.post('/api/auth/send-otp', async (req, res) => {
 
         // Generate rigorous 6-digit PINs
         const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        const phoneOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Save payload securely in Volatile Memory
         otpCache.set(email, {
             emailOtp,
-            phoneOtp,
             userData: { name, email, rollNumber, password, phone, hostelName }
         });
 
@@ -185,33 +185,26 @@ app.post('/api/auth/send-otp', async (req, res) => {
             from: 'mr.developer4u@gmail.com',
             to: email,
             subject: 'GreenScore - Your Verification PIN',
-            text: `Welcome to GreenScore! Your 6-digit Email Authentication Code is: ${emailOtp}`
+            text: `Welcome to GreenScore! Your 6-digit Authentication Code is: ${emailOtp}`
         };
         await transporter.sendMail(mailOptions);
 
-        // Dispatch SMS
-        await twilioClient.messages.create({
-            body: `GreenScore Registration: Your 6-digit Mobile Authentication Code is ${phoneOtp}`,
-            from: process.env.TWILIO_PHONE_NUMBER || '+12604002053',
-            to: phone.startsWith('+') ? phone : `+91${phone}` // Assume Indian code if + is missing, standard for user locale
-        });
-
-        res.status(200).json({ message: "Dual-Factor Authentication dispatched." });
+        res.status(200).json({ message: "Authentication dispatched." });
     } catch(err) {
         console.error("OTP Dispatch Failure:", err);
-        res.status(500).json({ error: 'Failed to send verification codes. Ensure your phone number is verified on your Twilio Trial!' });
+        res.status(500).json({ error: 'Failed to send verification code to your email.' });
     }
 });
 
 // 2FA STEP 2: Validate PINs & Mint User Document
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { email, emailOtp, phoneOtp } = req.body;
+        const { email, emailOtp } = req.body;
         
         const cachedSession = otpCache.get(email);
         if(!cachedSession) return res.status(400).json({ message: 'Registration session expired. Please restart.' });
 
-        if(cachedSession.emailOtp !== emailOtp || cachedSession.phoneOtp !== phoneOtp) {
+        if(cachedSession.emailOtp !== emailOtp) {
             return res.status(400).json({ message: 'Invalid OTP configurations. Access Denied.' });
         }
 
@@ -252,62 +245,6 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-app.post('/api/auth/phone-login-send', async (req, res) => {
-    try {
-        const { phone } = req.body;
-        if (!phone) return res.status(400).json({ message: 'Phone number required' });
-
-        // Retrieve existing user by their registered phone
-        const user = await User.findOne({ phone: new RegExp(`^${phone}$`, 'i') });
-        if (!user) return res.status(400).json({ message: 'No registered account found with this phone number. Please register first.' });
-
-        const phoneOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Overwrite or create OTP cache for this phone (use phone as session key)
-        otpCache.set(phone, {
-            phoneOtp,
-            userId: user._id
-        });
-
-        // Dispatch SMS
-        await twilioClient.messages.create({
-            body: `GreenScore Login: Your 6-digit Mobile Login Code is ${phoneOtp}`,
-            from: process.env.TWILIO_PHONE_NUMBER || '+12604002053',
-            to: phone.startsWith('+') ? phone : `+91${phone}`
-        });
-
-        res.status(200).json({ message: "Mobile Verification Code dispatched." });
-    } catch(err) {
-        console.error("Login OTP Dispatch Failure:", err);
-        res.status(500).json({ error: 'Failed to dispatch phone verification. Invalid Twilio API constraints.' });
-    }
-});
-
-app.post('/api/auth/phone-login-verify', async (req, res) => {
-    try {
-        const { phone, phoneOtp } = req.body;
-        
-        const cachedSession = otpCache.get(phone);
-        if(!cachedSession) return res.status(400).json({ message: 'Login session expired or code invalid. Please restart.' });
-
-        if(cachedSession.phoneOtp !== phoneOtp) {
-            return res.status(400).json({ message: 'Incorrect OTP. Access Denied.' });
-        }
-
-        const user = await User.findById(cachedSession.userId);
-        if(!user) return res.status(404).json({ message: 'System fault: Database unlinked.' });
-
-        // Scrub trace 
-        otpCache.delete(phone);
-
-        // JWT Session issuance (matches email login)
-        const token = jwt.sign({ id: user.id, role: user.role, name: user.name, email: user.email }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '7d' });
-        res.status(200).json({ token, user: { id: user.id, name: user.name, email: user.email, ecoScore: user.ecoScore, role: user.role } });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error during phone-based token generation' });
-    }
-});
 
 
 app.get('/api/users/me', authMiddleware, async (req, res) => {
@@ -528,6 +465,20 @@ app.post('/api/items/claim/:id', authMiddleware, async (req, res) => {
         const buyer = await User.findById(req.user.id);
 
         if(seller && seller.email && buyer) {
+            
+            // 1. Push buyer to interested buyers array
+            const buyerEntry = {
+                buyerId: buyer._id,
+                name: buyer.name,
+                email: buyer.email,
+                phone: buyer.phone || 'N/A',
+                hostelName: buyer.hostelName || 'N/A',
+                rollNumber: buyer.rollNumber || 'N/A'
+            };
+            item.interestedBuyers.push(buyerEntry);
+            await item.save();
+
+            // 2. Dispatch Email
             const mailOptions = {
                 from: process.env.SMTP_USER || 'no-reply@greenscore.com',
                 to: seller.email,
@@ -541,7 +492,7 @@ app.post('/api/items/claim/:id', authMiddleware, async (req, res) => {
                           <li><b>Hostel:</b> ${buyer.hostelName || 'N/A'}</li>
                           <li><b>Roll No:</b> ${buyer.rollNumber || 'N/A'}</li>
                        </ul>
-                       <p>Please contact them immediately using the details above to finalize the exchange!</p>
+                       <p>You can also view this request directly in your <b>Seller Activity</b> dashboard on the GreenScore platform!</p>
                        <br><p>Thank you for contributing to a greener campus.</p>`
             };
             transporter.sendMail(mailOptions).catch(err => console.log('Mail suppressed: Invalid credentials.'));

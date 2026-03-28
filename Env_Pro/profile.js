@@ -58,12 +58,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     myListings.forEach(item => {
                         const card = document.createElement('div');
                         card.className = 'card';
-                        card.style = "background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:16px;";
+                        card.style = "background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:16px; display:flex; flex-direction:column; justify-content:space-between; height:100%;";
+                        
+                        let buyersHTML = '';
+                        if (item.interestedBuyers && item.interestedBuyers.length > 0) {
+                            buyersHTML = '<div style="margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">';
+                            buyersHTML += '<h4 style="font-size:13px; color:var(--accent); margin-bottom:10px;">👤 Interested Buyers:</h4>';
+                            item.interestedBuyers.forEach(buyer => {
+                                buyersHTML += `
+                                    <div style="background:rgba(255,255,255,0.05); border-radius:8px; padding:10px; margin-bottom:8px; font-size:12px; color:var(--muted); line-height:1.4;">
+                                        <p style="color:white; font-weight:bold; margin-bottom:3px;">${buyer.name}</p>
+                                        <p>✉️ <a href="mailto:${buyer.email}" style="color:var(--accent); text-decoration:none;">${buyer.email}</a></p>
+                                        <p>📞 <a href="tel:${buyer.phone}" style="color:var(--accent); text-decoration:none;">${buyer.phone}</a></p>
+                                        <p>📍 ${buyer.hostelName}</p>
+                                    </div>
+                                `;
+                            });
+                            buyersHTML += '</div>';
+                        }
+                        
                         card.innerHTML = `
-                            <div style="width:100%; height:120px; background-image:url('${item.photoUrl || ''}'); background-size:cover; background-position:center; border-radius:12px; margin-bottom:10px; background-color:rgba(255,255,255,0.05);"></div>
-                            <h3 style="font-size:18px;">${item.itemName}</h3>
-                            <p style="color:var(--accent); font-weight:700; margin-bottom:15px;">${item.itemPrice}</p>
-                            <button onclick="deleteListing('${item._id}')" style="width:100%; padding:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; border-radius:8px; cursor:pointer;" onmouseover="this.style.background='#ef4444'; this.style.color='#fff';" onmouseout="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#ef4444';">Mark Sold / Remove</button>
+                            <div>
+                                <div style="width:100%; height:120px; background-image:url('${item.photoUrl || ''}'); background-size:cover; background-position:center; border-radius:12px; margin-bottom:10px; background-color:rgba(255,255,255,0.05);"></div>
+                                <h3 style="font-size:18px;">${item.itemName}</h3>
+                                <p style="color:var(--accent); font-weight:700; margin-bottom:15px;">${item.itemPrice}</p>
+                            </div>
+                            <div style="margin-top:auto;">
+                                <button onclick="deleteListing('${item._id}')" style="width:100%; padding:10px; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; border-radius:8px; cursor:pointer;" onmouseover="this.style.background='#ef4444'; this.style.color='#fff';" onmouseout="this.style.background='rgba(239,68,68,0.2)'; this.style.color='#ef4444';">Mark Sold / Remove</button>
+                                ${buyersHTML}
+                            </div>
                         `;
                         container.appendChild(card);
                     });
