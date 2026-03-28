@@ -1,4 +1,6 @@
-window.backendBase = 'https://env-pro-full-stack.onrender.com';
+window.backendBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') 
+    ? 'http://localhost:3000' 
+    : 'https://env-pro-full-stack.onrender.com';
 
 function renderCards(data, id) {
   const container = document.getElementById(id);
