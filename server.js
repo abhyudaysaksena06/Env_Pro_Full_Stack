@@ -44,7 +44,8 @@ if(!process.env.MONGO_URI || process.env.MONGO_URI.includes('<username>')) {
     console.error("CRITICAL HALT: Please replace the placeholder keys in your '.env' file with real MongoDB/Cloudinary Credentials!");
     console.error("=================================");
 } else {
-    mongoose.connect(process.env.MONGO_URI)
+    mongoose.set('bufferCommands', false);
+    mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
         .then(async () => {
             console.log('Successfully connected to MongoDB Atlas Cloud Cluster!');
             
