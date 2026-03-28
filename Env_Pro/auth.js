@@ -46,12 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const btn = registerForm.querySelector('button');
             const errDiv = document.getElementById('registerError');
-            btn.innerText = "Dispatching Security Code... ";
+            btn.innerText = "Creating Account... ";
             btn.style.opacity = '0.7';
             errDiv.innerText = "";
             
             try {
-                const res = await fetch(`${backendBase}/api/auth/send-otp`, {
+                const res = await fetch(`${backendBase}/api/auth/register`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -64,43 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.message || data.error || 'Failed to initialize verification.');
-                
-                // Transition Interface
-                registerForm.style.display = 'none';
-                document.getElementById('otpForm').style.display = 'grid';
-                document.querySelector('h2').innerText = "2-Step Verification";
-                
-            } catch(err) {
-                console.error(err);
-                errDiv.innerText = "❌ " + (err.message || "Failed to reach dispatch system.");
-                btn.innerText = "Send Verification Code";
-                btn.style.opacity = '1';
-            }
-        });
-    }
-
-    const otpForm = document.getElementById("otpForm");
-    if (otpForm) {
-        otpForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = otpForm.querySelector('button');
-            const errDiv = document.getElementById('otpError');
-            btn.innerText = "Decoupling Cryptography... ";
-            btn.style.opacity = '0.7';
-            errDiv.innerText = "";
-
-            try {
-                const res = await fetch(`${backendBase}/api/auth/register`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        email: document.getElementById('email').value, // Carried over from hidden form
-                        emailOtp: document.getElementById('emailOtp').value
-                    })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || data.error || 'Invalid OTP validation.');
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to create account.');
                 
                 // Success!
                 localStorage.setItem('token', data.token);
@@ -109,8 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "User_Profile.html";
             } catch(err) {
                 console.error(err);
-                errDiv.innerText = "❌ " + (err.message || "Invalid Email PIN Code.");
-                btn.innerText = "Authenticate & Initialize";
+                errDiv.innerText = "❌ " + (err.message || "Registration Failed.");
+                btn.innerText = "Create Account";
                 btn.style.opacity = '1';
             }
         });

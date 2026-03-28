@@ -116,7 +116,7 @@
           <thead>
             <tr style="background:rgba(0,0,0,0.3); color:var(--muted);">
               <th style="padding:15px; font-weight:600;">Name</th>
-              <th style="padding:15px; font-weight:600;">Email</th>
+              <th style="padding:15px; font-weight:600;">Contact Info</th>
               <th style="padding:15px; font-weight:600;">Role</th>
               <th style="padding:15px; font-weight:600;">Score</th>
               <th style="padding:15px; font-weight:600; text-align:right;">Actions</th>
@@ -239,7 +239,10 @@
 
             tr.innerHTML = `
                 <td style="padding:15px; color:${roleColor};">${u.name}</td>
-                <td style="padding:15px; color:var(--muted);">${u.email}</td>
+                <td style="padding:15px; color:var(--muted); line-height:1.4;">
+                   ${u.email}<br>
+                   <span style="color:var(--accent); font-size:12px;">📞 ${u.phone || 'N/A'}</span>
+                </td>
                 <td style="padding:15px; color:${roleColor}; font-weight:bold;">${u.role.toUpperCase()}</td>
                 <td style="padding:15px; color:#4ade80; font-weight:bold;">${u.ecoScore}</td>
                 <td style="padding:15px; text-align:right;">${actionHtml}</td>
