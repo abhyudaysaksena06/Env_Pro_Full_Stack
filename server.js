@@ -114,6 +114,9 @@ const User = mongoose.model('User', UserSchema);
 
 const HostelSchema = new mongoose.Schema({
     hostelName: { type: String, required: true, unique: true },
+    waterSaving: { type: Number, default: 0 },
+    foodWaste: { type: Number, default: 0 },
+    co2Control: { type: Number, default: 0 },
     totalScore: { type: Number, default: 0 },
     memberCount: { type: Number, default: 0 }
 });
@@ -244,6 +247,71 @@ app.delete('/api/admin/users/:id', authMiddleware, isAdmin, async (req, res) => 
     } catch(err) {
         console.error(err);
         res.status(500).json({error: "Failed to locate and delete user"});
+    }
+});
+
+app.get('/api/admin/hostels', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const hostels = await Hostel.find().sort({ totalScore: -1 });
+        res.json(hostels);
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({error: 'Failed to retrieve hostels database.'});
+    }
+});
+
+app.post('/api/admin/hostels', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const { hostelName, waterSaving, foodWaste, co2Control, memberCount } = req.body;
+        const totalScore = Number(waterSaving || 0) + Number(foodWaste || 0) + Number(co2Control || 0);
+
+        const newHostel = new Hostel({
+            hostelName,
+            waterSaving: Number(waterSaving || 0),
+            foodWaste: Number(foodWaste || 0),
+            co2Control: Number(co2Control || 0),
+            totalScore: totalScore,
+            memberCount: Number(memberCount || 0)
+        });
+        
+        await newHostel.save();
+        res.json({ message: 'Hostel provisioned successfully.', hostel: newHostel });
+    } catch(err) {
+        console.error(err);
+        if(err.code === 11000) return res.status(400).json({error: 'Hostel name already exists.'});
+        res.status(500).json({error: 'Failed to create hostel entry.'});
+    }
+});
+
+app.put('/api/admin/hostels/:id', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        const { waterSaving, foodWaste, co2Control, memberCount } = req.body;
+        const hostel = await Hostel.findById(req.params.id);
+        if(!hostel) return res.status(404).json({error: "Hostel not found"});
+
+        if(waterSaving !== undefined) hostel.waterSaving = Number(waterSaving);
+        if(foodWaste !== undefined) hostel.foodWaste = Number(foodWaste);
+        if(co2Control !== undefined) hostel.co2Control = Number(co2Control);
+        if(memberCount !== undefined) hostel.memberCount = Number(memberCount);
+        
+        // Auto Cumulative Re-Calculation
+        hostel.totalScore = hostel.waterSaving + hostel.foodWaste + hostel.co2Control;
+        
+        await hostel.save();
+        res.json({ message: 'Cumulative metrics updated.', hostel });
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to sync hostel variables."});
+    }
+});
+
+app.delete('/api/admin/hostels/:id', authMiddleware, isAdmin, async (req, res) => {
+    try {
+        await Hostel.findByIdAndDelete(req.params.id);
+        res.json({ message: "Hostel listing permanently scrubbed." });
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to purge hostel from cluster."});
     }
 });
 
