@@ -34,7 +34,7 @@
 /* SPLIT LAYOUT FOR ANALYTICS */
 .split-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 40px;
   align-items: start;
   margin-top: 20px;
