@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!token && !isAuthPage && !sessionStorage.getItem('popupDismissed')) {
     const popup = document.createElement('div');
     popup.id = 'authPopup';
-    popup.style = "position:fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+    popup.style = "position: fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
     popup.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
                 <h3 style="color:white; font-size:18px;">Join GreenScore 🌱</h3>

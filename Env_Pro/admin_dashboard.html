@@ -1,46 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>GreenScore - Admin Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style2.css">
-  
+
   <script>
     // CRITICAL: Synchronous pre-render Wall.
     // Blocks the browser from rendering the HTML body if the user is not locally authenticated as admin.
     (function checkAuthBeforeRender() {
-        const localToken = localStorage.getItem('token');
-        if (!localToken) {
-            window.location.replace("login.html");
-            return;
+      const localToken = localStorage.getItem('token');
+      if (!localToken) {
+        window.location.replace("login.html");
+        return;
+      }
+      try {
+        const localUser = JSON.parse(localStorage.getItem('user'));
+        if (!localUser || localUser.role !== 'admin') {
+          window.location.replace("login.html");
         }
-        try {
-            const localUser = JSON.parse(localStorage.getItem('user'));
-            if (!localUser || localUser.role !== 'admin') {
-                window.location.replace("login.html");
-            }
-        } catch(e) {
-            window.location.replace("login.html");
-        }
+      } catch (e) {
+        window.location.replace("login.html");
+      }
     })();
   </script>
 </head>
+
 <body>
   <div class="bg"></div>
   <div class="orb orb1" style="background: radial-gradient(circle, #ef4444 0%, transparent 70%);"></div>
   <div class="orb orb2"></div>
-  
+
   <div class="nav-container" id="navContainer">
     <nav>
       <div class="logo" style="color:#ef4444;">AdminCore</div>
-      
+
       <div class="hamburger">
         <span></span>
         <span></span>
         <span></span>
       </div>
-      
+
       <div class="menu">
         <a href="javascript:history.back()" class="link home-link" style="color:var(--muted);">
           <span class="link-icon">
@@ -54,7 +56,8 @@
         <a href="index.html" class="link home-link">
           <span class="link-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
           </span>
           <span class="link-title">Home</span>
@@ -93,7 +96,8 @@
         <a href="User_Profile.html" class="link profile-link">
           <span class="link-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </span>
           <span class="link-title">User Profile</span>
@@ -102,15 +106,20 @@
     </nav>
   </div>
 
-  <section class="profile-dashboard" style="display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding-top:150px; padding-bottom:50px; box-sizing:border-box;">
-    <div class="content-area fade-in visible" style="max-width:1000px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.3);">
+  <section class="profile-dashboard"
+    style="display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding-top:150px; padding-bottom:50px; box-sizing:border-box;">
+    <div class="content-area fade-in visible"
+      style="max-width:1000px; width:100%; border-radius:24px; padding:30px; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.3);">
       <h2 style="color:#ef4444; font-size:32px;">RESTRICTED: Authority Dashboard</h2>
-      <p style="color:var(--muted); margin-bottom:30px;">Direct Database Editor: Manage Users, Hostels, Global Scores, and Marketplace Operations.</p>
-      
+      <p style="color:var(--muted); margin-bottom:30px;">Direct Database Editor: Manage Users, Hostels, Global Scores,
+        and Marketplace Operations.</p>
+
       <div id="adminError" style="color:#ef4444; font-size:16px; margin-bottom:20px; text-align:center;"></div>
-      
+
       <!-- Users Database Section -->
-      <h3 style="color:var(--accent); margin-top:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Users Database</h3>
+      <h3
+        style="color:var(--accent); margin-top:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        Users Database</h3>
       <div style="background:rgba(255,255,255,0.02); border-radius:12px; margin-top:15px; overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:left; min-width:700px;">
           <thead>
@@ -123,13 +132,17 @@
             </tr>
           </thead>
           <tbody id="usersTableBody">
-            <tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Users Data...</td></tr>
+            <tr>
+              <td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Users Data...</td>
+            </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Marketplace Database Section -->
-      <h3 style="color:var(--accent); margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Marketplace Listings</h3>
+      <h3
+        style="color:var(--accent); margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        Marketplace Listings</h3>
       <div style="background:rgba(255,255,255,0.02); border-radius:12px; margin-top:15px; overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:left; min-width:700px;">
           <thead>
@@ -142,15 +155,20 @@
             </tr>
           </thead>
           <tbody id="itemsTableBody">
-            <tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Listings Data...</td></tr>
+            <tr>
+              <td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">Loading Listings Data...</td>
+            </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Hostel Database Section -->
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+      <div
+        style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
         <h3 style="color:var(--accent); margin:0;">Hostels Database</h3>
-        <button onclick="createHostelPrompt()" style="background:#4ade80; color:black; border:none; padding:8px 15px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px;">+ Configure New Hostel</button>
+        <button onclick="createHostelPrompt()"
+          style="background:#4ade80; color:black; border:none; padding:8px 15px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px;">+
+          Configure New Hostel</button>
       </div>
       <div style="background:rgba(255,255,255,0.02); border-radius:12px; margin-top:15px; overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:left; min-width:850px;">
@@ -165,79 +183,81 @@
             </tr>
           </thead>
           <tbody id="hostelsTableBody">
-            <tr><td colspan="6" style="padding:20px; text-align:center; color:var(--muted)">Loading Hostels Data...</td></tr>
+            <tr>
+              <td colspan="6" style="padding:20px; text-align:center; color:var(--muted)">Loading Hostels Data...</td>
+            </tr>
           </tbody>
         </table>
       </div>
-      
+
     </div>
   </section>
 
   <script>
-    window.backendBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') 
-    ? 'http://localhost:3000' 
-    : 'https://env-pro-full-stack.onrender.com';
+    window.backendBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+      ? 'http://localhost:3000'
+      : 'https://env-pro-full-stack.onrender.com';
     const token = localStorage.getItem('token');
-    
+
     // Server-side Double Validation
     fetch(`${backendBase}/api/users/me`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     }).then(res => res.json()).then(user => {
-        if(user.role !== 'admin') {
-            document.body.innerHTML = "<h2 style='text-align:center;color:#ef4444;margin-top:100px;'>ACCESS DENIED</h2>";
-            setTimeout(() => window.location.href = "login.html", 1500);
-        } else {
-            document.body.style.display = 'block'; // Failsafe display if needed
-            loadDatabases();
-        }
+      if (user.role !== 'admin') {
+        document.body.innerHTML = "<h2 style='text-align:center;color:#ef4444;margin-top:100px;'>ACCESS DENIED</h2>";
+        setTimeout(() => window.location.href = "login.html", 1500);
+      } else {
+        document.body.style.display = 'block'; // Failsafe display if needed
+        loadDatabases();
+      }
     }).catch(err => {
-        window.location.href = "login.html";
+      window.location.href = "login.html";
     });
 
     async function loadDatabases() {
-        try {
-            const [usersRes, itemsRes, hostelsRes] = await Promise.all([
-                fetch(`${backendBase}/api/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch(`${backendBase}/api/items`),
-                fetch(`${backendBase}/api/admin/hostels`, { headers: { 'Authorization': `Bearer ${token}` } })
-            ]);
-            
-            const users = await usersRes.json();
-            const items = await itemsRes.json();
-            const hostels = await hostelsRes.json();
-            
-            renderUsers(users);
-            renderItems(items);
-            renderHostels(hostels);
-        } catch(err) {
-            console.error("Database sync failed", err);
-            document.getElementById('adminError').innerText = "Failed to sync with backend databases.";
-        }
+      try {
+        const [usersRes, itemsRes, hostelsRes] = await Promise.all([
+          fetch(`${backendBase}/api/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${backendBase}/api/items`),
+          fetch(`${backendBase}/api/admin/hostels`, { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+
+        const users = await usersRes.json();
+        const items = await itemsRes.json();
+        const hostels = await hostelsRes.json();
+
+        renderUsers(users);
+        renderItems(items);
+        renderHostels(hostels);
+      } catch (err) {
+        console.error("Database sync failed", err);
+        document.getElementById('adminError').innerText = "Failed to sync with backend databases.";
+      }
     }
 
     function renderUsers(users) {
-        const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = '';
-        if(users.length === 0 || users.error) {
-            tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#ef4444">${users.error || "No users found"}</td></tr>`;
-            return;
-        }
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+      if (users.length === 0 || users.error) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#ef4444">${users.error || "No users found"}</td></tr>`;
+        return;
+      }
 
-        users.forEach(u => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            
-            const roleColor = u.role === 'admin' ? '#ef4444' : 'white';
-            const actionHtml = u.role === 'admin' 
-                ? `<span style="color:#ef4444; font-size:12px; padding:6px 10px; font-weight:bold;">PROTECTED</span>`
-                : `
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+
+        const roleColor = u.role === 'admin' ? '#ef4444' : 'white';
+        const actionHtml = u.role === 'admin'
+          ? `<span style="color:#ef4444; font-size:12px; padding:6px 10px; font-weight:bold;">PROTECTED</span>`
+          : `
                    <div style="display:flex; justify-content:flex-end; gap:5px;">
                      <button onclick="awardScorePrompt('${u._id}', '${u.name}')" style="background:#4ade80; color:black; border:none; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">+ Pts</button>
                      <button onclick="deleteUser('${u._id}', '${u.name}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Delete</button>
                    </div>
                   `;
 
-            tr.innerHTML = `
+        tr.innerHTML = `
                 <td style="padding:15px; color:${roleColor};">${u.name}</td>
                 <td style="padding:15px; color:var(--muted); line-height:1.4;">
                    ${u.email}<br>
@@ -247,22 +267,22 @@
                 <td style="padding:15px; color:#4ade80; font-weight:bold;">${u.ecoScore}</td>
                 <td style="padding:15px; text-align:right;">${actionHtml}</td>
             `;
-            tbody.appendChild(tr);
-        });
+        tbody.appendChild(tr);
+      });
     }
 
     function renderItems(items) {
-        const tbody = document.getElementById('itemsTableBody');
-        tbody.innerHTML = '';
-        if(items.length === 0 || items.error) {
-            tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">${items.error || "Marketplace is empty."}</td></tr>`;
-            return;
-        }
+      const tbody = document.getElementById('itemsTableBody');
+      tbody.innerHTML = '';
+      if (items.length === 0 || items.error) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:var(--muted)">${items.error || "Marketplace is empty."}</td></tr>`;
+        return;
+      }
 
-        items.forEach(i => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            tr.innerHTML = `
+      items.forEach(i => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+        tr.innerHTML = `
                 <td style="padding:15px; color:white; font-weight:500;">${i.itemName}</td>
                 <td style="padding:15px; color:var(--muted);">${i.listedBy}</td>
                 <td style="padding:15px; color:var(--accent); font-weight:bold;">${i.itemPrice}</td>
@@ -271,78 +291,78 @@
                   <button onclick="deleteListing('${i._id}', '${i.itemName}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Purge</button>
                 </td>
             `;
-            tbody.appendChild(tr);
-        });
+        tbody.appendChild(tr);
+      });
     }
 
     async function awardScorePrompt(userId, userName) {
-        const pts = prompt(`How many exact GreenScore points would you like to award to ${userName}?`);
-        if(!pts || isNaN(pts)) return;
-        
-        try {
-            const res = await fetch(`${backendBase}/api/admin/score/user`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId, points: pts })
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || data.message || "Execution Failed");
-            alert(data.message);
-            loadDatabases();
-        } catch(err) {
-            alert(err.message);
-        }
+      const pts = prompt(`How many exact GreenScore points would you like to award to ${userName}?`);
+      if (!pts || isNaN(pts)) return;
+
+      try {
+        const res = await fetch(`${backendBase}/api/admin/score/user`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: userId, points: pts })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || data.message || "Execution Failed");
+        alert(data.message);
+        loadDatabases();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     async function deleteUser(userId, userName) {
-        const confirmDel = confirm(`CRITICAL: Are you absolutely sure you want to permanently delete user: ${userName}? \nThis cannot be undone!`);
-        if(!confirmDel) return;
+      const confirmDel = confirm(`CRITICAL: Are you absolutely sure you want to permanently delete user: ${userName}? \nThis cannot be undone!`);
+      if (!confirmDel) return;
 
-        try {
-            const res = await fetch(`${backendBase}/api/admin/users/${userId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || data.message || "Failed");
-            alert(data.message);
-            loadDatabases();
-        } catch(err) {
-            alert(err.message);
-        }
+      try {
+        const res = await fetch(`${backendBase}/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || data.message || "Failed");
+        alert(data.message);
+        loadDatabases();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     async function deleteListing(itemId, itemName) {
-        const confirmDel = confirm(`Are you sure you want to purge listing: ${itemName}?`);
-        if(!confirmDel) return;
+      const confirmDel = confirm(`Are you sure you want to purge listing: ${itemName}?`);
+      if (!confirmDel) return;
 
-        try {
-            const res = await fetch(`${backendBase}/api/admin/items/${itemId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || data.message || "Failed");
-            alert(data.message);
-            loadDatabases();
-        } catch(err) {
-            alert(err.message);
-        }
+      try {
+        const res = await fetch(`${backendBase}/api/admin/items/${itemId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || data.message || "Failed");
+        alert(data.message);
+        loadDatabases();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     // --- HOSTEL METHODS ---
     function renderHostels(hostels) {
-        const tbody = document.getElementById('hostelsTableBody');
-        tbody.innerHTML = '';
-        if(hostels.length === 0 || hostels.error) {
-            tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--muted)">${hostels.error || "No hostels configured."}</td></tr>`;
-            return;
-        }
+      const tbody = document.getElementById('hostelsTableBody');
+      tbody.innerHTML = '';
+      if (hostels.length === 0 || hostels.error) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--muted)">${hostels.error || "No hostels configured."}</td></tr>`;
+        return;
+      }
 
-        hostels.forEach(h => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
-            tr.innerHTML = `
+      hostels.forEach(h => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+        tr.innerHTML = `
                 <td style="padding:15px; color:white; font-weight:600; font-size:15px;">${h.hostelName}</td>
                 <td style="padding:15px; color:#38bdf8;">${h.waterWastedLiters} L</td>
                 <td style="padding:15px; color:#facc15;">${h.foodWastedKg} kg</td>
@@ -353,105 +373,106 @@
                   <button onclick="deleteHostel('${h._id}', '${h.hostelName}')" style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer;">Delete</button>
                 </td>
             `;
-            tbody.appendChild(tr);
-        });
+        tbody.appendChild(tr);
+      });
     }
 
     async function createHostelPrompt() {
-        const hName = prompt("Enter precise globally unique name for the new Hostel (e.g. 'Hostel J'):");
-        if(!hName) return;
+      const hName = prompt("Enter precise globally unique name for the new Hostel (e.g. 'Hostel J'):");
+      if (!hName) return;
 
-        try {
-            const res = await fetch(`${backendBase}/api/admin/hostels`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ hostelName: hName })
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || "Failed");
-            
-            // Re-render
-            loadDatabases();
-            setTimeout(() => alert(`Created ${hName} successfully! Click Edit Metrics to assign starting values.`), 300);
-        } catch(err) {
-            alert(err.message);
-        }
+      try {
+        const res = await fetch(`${backendBase}/api/admin/hostels`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hostelName: hName })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed");
+
+        // Re-render
+        loadDatabases();
+        setTimeout(() => alert(`Created ${hName} successfully! Click Edit Metrics to assign starting values.`), 300);
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     async function editHostelPrompt(id, name, w, f, c) {
-        const nextW = prompt(`Enter exact Water Wasted (in Liters) for ${name}:`, w);
-        if(nextW === null) return;
-        const nextF = prompt(`Enter exact Food Wasted (in kg) for ${name}:`, f);
-        if(nextF === null) return;
-        const nextC = prompt(`Enter exact CO2 Emitted (in kg) for ${name}:`, c);
-        if(nextC === null) return;
+      const nextW = prompt(`Enter exact Water Wasted (in Liters) for ${name}:`, w);
+      if (nextW === null) return;
+      const nextF = prompt(`Enter exact Food Wasted (in kg) for ${name}:`, f);
+      if (nextF === null) return;
+      const nextC = prompt(`Enter exact CO2 Emitted (in kg) for ${name}:`, c);
+      if (nextC === null) return;
 
-        try {
-            const res = await fetch(`${backendBase}/api/admin/hostels/${id}`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    waterWastedLiters: nextW,
-                    foodWastedKg: nextF,
-                    co2EmittedKg: nextC
-                })
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || "Failed");
-            loadDatabases(); // the backend auto-tallies totalScore!
-        } catch(err) {
-            alert(err.message);
-        }
+      try {
+        const res = await fetch(`${backendBase}/api/admin/hostels/${id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            waterWastedLiters: nextW,
+            foodWastedKg: nextF,
+            co2EmittedKg: nextC
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed");
+        loadDatabases(); // the backend auto-tallies totalScore!
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     async function deleteHostel(id, name) {
-        if(!confirm(`WARNING: Remove Hostel ${name} from backend entirely?`)) return;
+      if (!confirm(`WARNING: Remove Hostel ${name} from backend entirely?`)) return;
 
-        try {
-            const res = await fetch(`${backendBase}/api/admin/hostels/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || "Failed");
-            loadDatabases();
-        } catch(err) {
-            alert(err.message);
-        }
+      try {
+        const res = await fetch(`${backendBase}/api/admin/hostels/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed");
+        loadDatabases();
+      } catch (err) {
+        alert(err.message);
+      }
     }
   </script>
-  
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <div class="footer-brand">
-          <div class="footer-logo">GreenScore</div>
-          <p>
-            Monitoring sustainability across TIET Patiala — tracking e-waste,
-            water, food waste, and CO2 emissions.
-          </p>
-        </div>
-        <div class="footer-links">
-          <h4>Pages</h4>
-          <a href="index.html">Home</a>
-          <a href="Leaderboard.html">Leaderboard</a>
-          <a href="E_Waste.html">E-Waste</a>
-          <a href="Team.html">Team</a>
-          <a href="User_Profile.html">User Profile</a>
-        </div>
-        <div class="footer-links" style="text-align: right;">
-          <h4>Track</h4>
-          <a href="Leaderboard.html#water">💧 Water Usage</a>
-          <a href="Leaderboard.html#food">♻ Waste</a>
-          <a href="Leaderboard.html#co2">🌫 Carbon</a>
-          <a href="Leaderboard.html">🔌 E-Waste</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        Resource Equilibrium Project · TIET Patiala · 2026
-      </div>
-    </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">GreenScore</div>
+        <p>
+          Monitoring sustainability across TIET Patiala — tracking e-waste,
+          water, food waste, and CO2 emissions.
+        </p>
+      </div>
+      <div class="footer-links">
+        <h4>Pages</h4>
+        <a href="index.html">Home</a>
+        <a href="Leaderboard.html">Leaderboard</a>
+        <a href="E_Waste.html">E-Waste</a>
+        <a href="Team.html">Team</a>
+        <a href="User_Profile.html">User Profile</a>
+      </div>
+      <div class="footer-links" style="text-align: right;">
+        <h4>Track</h4>
+        <a href="Leaderboard.html#water">💧 Water Usage</a>
+        <a href="Leaderboard.html#food">♻ Waste</a>
+        <a href="Leaderboard.html#co2">🌫 Carbon</a>
+        <a href="Leaderboard.html">🔌 E-Waste</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Resource Equilibrium Project · TIET Patiala · 2026
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
