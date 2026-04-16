@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
             position: fixed; 
             top: -300px; 
             right: 30px; 
-            background: rgba(15, 23, 42, 0.95); 
-            border: 1px solid #4ade80; 
+            background: var(--nav-bg); 
+            border: 1px solid var(--accent); 
             padding: 20px; 
             border-radius: 16px; 
             z-index: 999999; 
@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     popup.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                <h3 style="color:white; font-size:18px;">Join GreenScore 🌱</h3>
+                <h3 style="color:var(--text-main); font-size:18px;">Join GreenScore 🌱</h3>
                 <button onclick="sessionStorage.setItem('popupDismissed', 'true'); document.getElementById('authPopup').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer;" aria-label="Close">&times;</button>
             </div>
             <p style="color:var(--muted); font-size:14px; margin-bottom:15px; max-width:260px; line-height:1.4;">Log in to buy or sell E-Waste items, track your CO2 footprint, and climb the leaderboard!</p>
