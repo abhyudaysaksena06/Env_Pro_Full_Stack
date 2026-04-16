@@ -176,7 +176,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!token && !isAuthPage && !sessionStorage.getItem('popupDismissed')) {
     const popup = document.createElement('div');
     popup.id = 'authPopup';
-    popup.style = "position: fixed; bottom:30px; right:30px; background:rgba(15,23,42,0.95); border:1px solid #4ade80; padding:20px; border-radius:16px; z-index:9999; backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:translateY(50px); opacity:0; transition:all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+    popup.style.cssText = `
+            position: fixed; 
+            top: -300px; 
+            right: 30px; 
+            background: rgba(15, 23, 42, 0.95); 
+            border: 1px solid #4ade80; 
+            padding: 20px; 
+            border-radius: 16px; 
+            z-index: 999999; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            opacity: 0; 
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+            pointer-events: auto;
+        `;
     popup.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
                 <h3 style="color:white; font-size:18px;">Join GreenScore 🌱</h3>
@@ -191,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Wait for preloader to finish, then slide in
     setTimeout(() => {
-      popup.style.transform = "translateY(0)";
+      popup.style.top = "25vh";
       popup.style.opacity = "1";
     }, 2500);
   }
@@ -245,10 +258,11 @@ document.querySelectorAll(".fade-in").forEach((el) => {
 });
 
 /* IMPACT CALCULATOR */
-function calculateImpact() {
+function calculateTotalImpact() {
   const acHours = document.getElementById("acHours").value || 0;
   const distKm = document.getElementById("distKm").value || 0;
   const vehicleType = document.getElementById("vehicleType").value;
+  const clothesKg = document.getElementById("clothesKg").value || 0;
 
   // Constants (approximate kg CO2)
   const acCo2PerHour = 0.45;
@@ -259,31 +273,46 @@ function calculateImpact() {
     case "bike": transportCo2PerKm = 0.05; break; // 50g/km
     case "auto": transportCo2PerKm = 0.10; break; // 100g/km
     case "ev": transportCo2PerKm = 0.02; break; // 20g/km (grid emissions)
+    case "bus": transportCo2PerKm = 0.04; break; // 40g/km
   }
 
   const acImpact = (acHours * acCo2PerHour).toFixed(2);
   const transportImpact = (distKm * transportCo2PerKm).toFixed(2);
-  const totalImpact = (parseFloat(acImpact) + parseFloat(transportImpact)).toFixed(2);
+  const totalCo2 = (parseFloat(acImpact) + parseFloat(transportImpact)).toFixed(2);
 
-  let analogy = "";
-  if (totalImpact > 0) {
-    const mobileCharges = Math.round(totalImpact * 122); // 1kg CO2 = ~122 smartphone charges
-    const treeAbsorption = (totalImpact / 21).toFixed(1); // 1 tree absorbs ~21kg CO2 per year
+  const waterPerKg = 15; // ~15 liters of water per kg of clothes
+  const totalWater = (clothesKg * waterPerKg).toFixed(1);
 
-    analogy = `
-      <p>Your footprint for these activities is <strong>${totalImpact} kg of CO2</strong>.</p>
-      <br>
-      <p>🌎 <strong>What does this mean?</strong></p>
-      <p>This equals the emissions from charging a smartphone <strong>${mobileCharges} times</strong>.</p>
-      <p>It would take a mature tree <strong>${treeAbsorption} years</strong> to absorb this much CO2.</p>
+  // Averages for comparison
+  const avgCo2 = 6; // daily average kg CO2
+  const avgWater = 20; // daily average liters for washing
+
+  let result = "";
+  if (totalCo2 > 0 || totalWater > 0) {
+    const co2Comparison = totalCo2 > avgCo2
+      ? `<span style="color: #ef4444;">higher than the average (${avgCo2} kg) ⚠️</span>`
+      : (totalCo2 == avgCo2 ? `<span style="color: #eab308;">equal to the average ⚖️</span>` : `<span style="color: #4ade80;">lower than the average (${avgCo2} kg) 🌟</span>`);
+
+    const waterComparison = totalWater > avgWater
+      ? `<span style="color: #ef4444;">higher than the average (${avgWater} L) ⚠️</span>`
+      : (totalWater == avgWater ? `<span style="color: #eab308;">equal to the average ⚖️</span>` : `<span style="color: #4ade80;">lower than the average (${avgWater} L) 🌟</span>`);
+
+    result = `
+      <p>🌬️ <strong>Carbon Footprint:</strong> ${totalCo2} kg CO2</p>
+      <p style="font-size: 14px; margin-bottom: 12px;">This is ${co2Comparison}</p>
+      
+      <p>💧 <strong>Water Footprint:</strong> ${totalWater} Liters</p>
+      <p style="font-size: 14px;">This is ${waterComparison}</p>
     `;
   } else {
-    analogy = "<p>Please enter valid usage data to see your impact.</p>";
+    result = "<p>Please enter valid usage data to see your impact.</p>";
   }
 
-  const resultBox = document.getElementById("impactResult");
-  resultBox.innerHTML = analogy;
-  resultBox.style.display = "block";
+  const resultBox = document.getElementById("totalImpactResult");
+  if (resultBox) {
+    resultBox.innerHTML = result;
+    resultBox.style.display = "block";
+  }
 }
 
 /* NAVBAR SCROLL */

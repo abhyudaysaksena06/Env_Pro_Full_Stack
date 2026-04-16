@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GreenScore - E-Waste</title>
-  
+
   <script>
-    if(localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
-    if(localStorage.getItem('text-size') === 'large') document.documentElement.setAttribute('data-text', 'large');
+    if (localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    if (localStorage.getItem('text-size') === 'large') document.documentElement.setAttribute('data-text', 'large');
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style2.css" />
   <link rel="stylesheet" href="ewaste.css" />
 </head>
+
 <body>
   <!-- PRELOADER -->
   <div id="loader">
@@ -34,7 +36,7 @@
   <div class="nav-container" id="navContainer">
     <nav>
       <div class="logo">GreenScore</div>
-      
+
       <div class="hamburger">
         <span></span>
         <span></span>
@@ -45,7 +47,8 @@
         <a href="index.html" class="link home-link">
           <span class="link-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              <path
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
           </span>
           <span class="link-title">Home</span>
@@ -69,8 +72,10 @@
         <a href="Team.html" class="link team-link">
           <span class="link-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87" />
+              <path d="M16 3.13a4 4 0 010 7.75" />
             </svg>
           </span>
           <span class="link-title">Team</span>
@@ -78,7 +83,8 @@
         <a href="User_Profile.html" class="link profile-link">
           <span class="link-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </span>
           <span class="link-title">User Profile</span>
@@ -87,14 +93,26 @@
     </nav>
   </div>
 
-  <!-- E-WASTE HERO (Map Locator) -->
+  <!-- E-WASTE Disposal Process -->
   <section class="ewaste-locator">
     <div class="container" style="display: block;">
-      <h1 class="page-header" style="text-align:center; font-size:48px; margin-bottom:10px; font-weight:800; background: linear-gradient(90deg, #9ca3af, #16a34a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Campus E-Waste Bins</h1>
-      <p style="text-align:center; color:#6b7280; margin-bottom: 40px; font-size: 16px;">Locate authorized disposal bins across the Thapar Institute campus securely.</p>
+      <h1 class="page-header"
+        style="text-align:center; font-size:48px; margin-bottom:10px; font-weight:800; background: linear-gradient(90deg, #9ca3af, #16a34a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        Proper Check-in & Disposal</h1>
       
-      <div class="map-wrapper fade-in">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13775.335272667357!2d76.3533475!3d30.3541819!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391028ab86533db5%3A0x93cc1f72eae1c9a8!2sThapar%20Institute%20of%20Engineering%20%26%20Technology!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="fade-in" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); margin-top: 30px;">
+        <h3 style="color: #4ade80; margin-bottom: 15px; font-size: 24px;">Campus E-Waste Bins</h3>
+        <p style="color: #d1d5db; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+          E-waste bins have been strategically set up everywhere across the campus. Students can easily find and utilize the nearest e-waste smart bin located in their hostel lobbies, academic blocks, or cafeteria zones for convenient disposal.
+        </p>
+
+        <h3 style="color: #4ade80; margin-bottom: 15px; font-size: 22px;">Standard Disposal Process:</h3>
+        <ul style="color: #9ca3af; line-height: 1.8; margin-left: 20px; font-size: 16px;">
+          <li style="margin-bottom: 8px;"><strong>Step 1:</strong> Segregate any lithium batteries or swollen components separately.</li>
+          <li style="margin-bottom: 8px;"><strong>Step 2:</strong> Scan the QR code on the front of the e-waste bin to log your drop-off.</li>
+          <li style="margin-bottom: 8px;"><strong>Step 3:</strong> Deposit your unused cables, damaged circuitry, or old gadgets safely inside.</li>
+          <li style="margin-bottom: 8px;"><strong>Step 4:</strong> Earn Eco-Points instantly towards your individual and hostel leaderboard ranking!</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -125,9 +143,11 @@
   <!-- E-WASTE MARKETPLACE PORTALS -->
   <section class="marketplace-portals">
     <div class="container" style="display: block;">
-      <h2 style="color:var(--accent); margin-bottom:15px; font-size:36px; text-align:center;">Peer-to-Peer Marketplace</h2>
-      <p style="color:var(--muted); text-align:center; margin-bottom: 40px; font-size:16px;">Securely buy, sell, and claim recycled electronics organically on campus.</p>
-      
+      <h2 style="color:var(--accent); margin-bottom:15px; font-size:36px; text-align:center;">Peer-to-Peer Marketplace
+      </h2>
+      <p style="color:var(--muted); text-align:center; margin-bottom: 40px; font-size:16px;">Securely buy, sell, and
+        claim recycled electronics organically on campus.</p>
+
       <div class="portal-grid">
         <a href="E_Waste_Buy.html" class="portal-card fade-in">
           <div class="portal-icon">🛒</div>
@@ -143,39 +163,40 @@
     </div>
   </section>
 
-  
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <div class="footer-brand">
-          <div class="footer-logo">GreenScore</div>
-          <p>
-            Monitoring sustainability across TIET Patiala — tracking e-waste,
-            water, food waste, and CO2 emissions.
-          </p>
-        </div>
-        <div class="footer-links">
-          <h4>Pages</h4>
-          <a href="index.html">Home</a>
-          <a href="Leaderboard.html">Leaderboard</a>
-          <a href="E_Waste.html">E-Waste</a>
-          <a href="Team.html">Team</a>
-          <a href="User_Profile.html">User Profile</a>
-        </div>
-        <div class="footer-links" style="text-align: right;">
-          <h4>Track</h4>
-          <a href="Leaderboard.html#water">💧 Water Usage</a>
-          <a href="Leaderboard.html#food">♻ Waste</a>
-          <a href="Leaderboard.html#co2">🌫 Carbon</a>
-          <a href="Leaderboard.html">🔌 E-Waste</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        Resource Equilibrium Project · TIET Patiala · 2026
-      </div>
-    </footer>
 
-    <!-- SCRIPTS -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">GreenScore</div>
+        <p>
+          Monitoring sustainability across TIET Patiala — tracking e-waste,
+          water, food waste, and CO2 emissions.
+        </p>
+      </div>
+      <div class="footer-links">
+        <h4>Pages</h4>
+        <a href="index.html">Home</a>
+        <a href="Leaderboard.html">Leaderboard</a>
+        <a href="E_Waste.html">E-Waste</a>
+        <a href="Team.html">Team</a>
+        <a href="User_Profile.html">User Profile</a>
+      </div>
+      <div class="footer-links" style="text-align: right;">
+        <h4>Track</h4>
+        <a href="Leaderboard.html#water">💧 Water Usage</a>
+        <a href="Leaderboard.html#food">♻ Waste</a>
+        <a href="Leaderboard.html#co2">🌫 Carbon</a>
+        <a href="Leaderboard.html">🔌 E-Waste</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Resource Equilibrium Project · TIET Patiala · 2026
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>

@@ -179,10 +179,18 @@
               <option value="bike">Bike</option>
               <option value="auto">Auto Rikshaw</option>
               <option value="ev">EV Auto</option>
+              <option value="bus">Bus</option>
             </select>
           </div>
-          <button class="btn" onclick="calculateImpact()">Calculate Impact</button>
-          <div id="impactResult" class="impact-result"></div>
+          <h3 style="margin-top: 30px;">Water Footprint</h3>
+          <div class="input-group">
+            <label>Clothes Washed (kg)</label>
+            <input type="number" id="clothesKg" placeholder="e.g. 5" min="0">
+          </div>
+
+          <button class="btn" style="margin-top: 20px; width: 100%;" onclick="calculateTotalImpact()">Calculate Total
+            Impact</button>
+          <div id="totalImpactResult" class="impact-result"></div>
         </div>
 
         <div class="analogies fade-in delay">

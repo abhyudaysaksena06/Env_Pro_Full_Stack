@@ -27,7 +27,6 @@ body {
 body {
   background: var(--bg);
   color: #fff;
-  overflow-x: hidden;
 }
 
 /* CONTAINER */
